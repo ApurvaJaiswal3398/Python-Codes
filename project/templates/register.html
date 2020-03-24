@@ -1,0 +1,78 @@
+{% extends 'layout.html' %}
+
+{% block title %}Register{% endblock %}
+
+{% block css %}
+<style>
+    .single-card-tab {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+    }
+</style>
+{% endblock %}
+
+
+{% block body %}
+<br><br>
+<div class="container-md">
+    {% if message %}
+    <div class="row" style="margin: 50px 70px -30px;">
+        <div class="col-sm-12 alert alert-{{ alert }}" role="alert">
+            {{ message }}
+        </div>
+    </div>       
+    {% endif %}
+    <div class="row  row-col-2" style="margin: 50px;">
+        <div class="col">
+            <div class="card sticky-top" style="top: 100px;">
+                <div class="card-body bg-info text-light single-card-tab rounded" style="padding: 50px 100px; height: 60vh;">
+                    <form method="POST" class="text-center">
+                        <div class="h3 mb-3 font-weight-normal text-center">Already Registered? </div><hr>
+                        <a href="/login"><button type="button" class="btn btn-danger col-sm-6 text-center rounded-pill">Login Now</button></a>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <div class="col">
+            <div class="card">
+                <div class="card-body bg-light text-dark single-card-tab rounded" style="padding: 50px 100px; height: 115vh">
+                    <form method="post">
+                        <div class="h3 mb-3 font-weight-normal text-center">Register</div><hr>
+                        <div class="form-group">
+                            <label for="firstname">First Name</label>
+                            <input type="text" class="form-control" name="firstname" id="firstname" aria-describedby="firstnameID" placeholder="Enter First Name">
+                        </div>
+                        <div class="form-group">
+                            <label for="lastname">Last Name</label>
+                            <input type="text" class="form-control" name="lastname" id="lastname" aria-describedby="lastnameID" placeholder="Enter Last Name">
+                        </div>
+                        <div class="form-group">
+                            <label for="register_username">Username</label>
+                            <input type="text"
+                            class="form-control" name="register_username" id="register_username" aria-describedby="UsernameId" placeholder="Enter Username">
+                        </div>
+                        <div class="form-group">
+                            <label for="mobile">Mobile</label>
+                            <input type="text" class="form-control" name="mobile" id="mobile" aria-describedby="mobileId" placeholder="Enter Mobile Number">
+                        </div>
+                        <div class="form-group">
+                            <label for="register_email">Email</label>
+                            <input type="email" class="form-control" name="register_email" id="register_email" aria-describedby="EmailId" placeholder="Enter Email">
+                        </div>
+                        <div class="form-group">
+                            <label for="register_password">Password</label>
+                            <input type="password" class="form-control" name="register_password" id="register_password" placeholder="Enter Password">
+                        </div>
+                        <div class="form-group">
+                            <label for="register_confirm">Confirm Password</label>
+                            <input type="password" class="form-control" name="register_confirm" id="register_confirm" placeholder="Confirm Password">
+                        </div>
+                        <button class="btn btn-success col-sm-6 rounded-pill">Sign Up</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

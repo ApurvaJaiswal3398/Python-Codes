@@ -1,0 +1,63 @@
+{% extends 'layout.html' %}
+
+{% block title %}{{ user["first_name"] }}{% endblock %}
+
+{% block body %}
+<!-- <br><br><br><br><br>{{ user }}<br><br><br><br><br> -->
+<form method="post">
+    <div class="row row-col-3" style="margin: 75px 50px;">
+        {% if logged_in %}
+        <div class="col">
+            <div class="card">
+                <div class="card-body text-center">1</div>
+            </div>
+        </div>
+        <div class="col">
+            <div class="card">
+                <div class="card-body" style="padding: 50px;">
+                    <h2 class="text-center">Profile Photo</h2><br>
+                    <!-- <img src="/..{{ user['image_file'] }}" class="rounded-circle mx-auto d-block" style="height: 200px; width: 200px;"><br> -->
+                    <img id="image" src="/..{{ user['image_file'] }}" alt="Profile Pic"  class="rounded-circle mx-auto d-block border" style="height: 200px; width: auto;"/>
+                    <div class="form-group">
+                        <label for="image_file">Choose Picture</label>
+                        <input type="file" class="form-control-file btn-info" onchange="readURL(this);" name="image_file" id="image_file" placeholder="Select A Picture" aria-describedby="imageID">
+                        <small id="imageID" class="form-text text-muted">Select a square image or it may distort</small>
+                        <!-- <input type='file' class="form-control-file btn-info" onchange="readURL(this);" name="image_file" id="image_file" placeholder="Select A Picture"/> -->
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col">
+            <div class="card">
+                <div class="card-body">3</div>
+                <form method="post">
+                    <button class="btn btn-danger">Save</button>
+                </form>
+                <!-- <button type="submit" class="btn btn-danger">Save</button> -->
+            </div>
+        </div>
+        {% else %}
+        <div class="card mx-auto d-block">
+            <div class="card-body text-center" style="padding: 50px; margin: 50px;">
+                <h3>First Log In to view contents of this page.!</h3>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</form>
+{% endblock %}
+
+{% block js %}
+<script>
+    function readURL(input) {
+        if (input.files && input.files[0]) {
+            var reader = new FileReader();
+            reader.onload = function(e) {
+                $("#image").attr("src", e.target.result);
+            };
+            reader.readAsDataURL(input.files[0]);
+            // console.log(input.files[0].mozFullPath);
+        }
+    }
+</script>
+{% endblock %}
