@@ -20,7 +20,7 @@
                     <img id="image" src="/..{{ user['image_file'] }}" alt="Profile Pic"  class="rounded-circle mx-auto d-block border" style="height: 200px; width: auto;"/>
                     <div class="form-group">
                         <label for="image_file">Choose Picture</label>
-                        <input type="file" class="form-control-file btn-info" onchange="readURL(this);" name="image_file" id="image_file" placeholder="Select A Picture" aria-describedby="imageID">
+                        <input type="file" class="form-control-file btn-info" onchange="readURL(this);" name="image_file" id="image_file" accept="image/*" placeholder="Select A Picture" aria-describedby="imageID">
                         <small id="imageID" class="form-text text-muted">Select a square image or it may distort</small>
                         <!-- <input type='file' class="form-control-file btn-info" onchange="readURL(this);" name="image_file" id="image_file" placeholder="Select A Picture"/> -->
                     </div>

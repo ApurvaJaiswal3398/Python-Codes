@@ -137,7 +137,7 @@ def account():
     if request.method == "POST":
         # pic=save_picture(request.form.get("image_file"))
         # print("The IMage File PAth given is :", pic)
-        print("the image is : ",request.form.get("image_file"))
+        print("the image is :",request.form.get("image_file"))
         pic = save_picture(request.form.get("image_file"))
         print("received picture path :",pic)
     return render_template('account.html', title='Account', user=logged_in_detail, logged_in=logged_in)
