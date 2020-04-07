@@ -1,8 +1,9 @@
-from flask import render_template, url_for, redirect, request
+from flask import render_template, url_for, redirect, request, flash
 from project import app, crypt, db, Users, Carts, Products, Customer_Cart, Billing
 import secrets
 import os
 from PIL import Image
+from werkzeug.utils import secure_filename
 
 logged_in = False
 logged_in_detail = None
@@ -31,7 +32,7 @@ def login():
             if crypt.check_password_hash(detail["password"], login_password):
                 print("Email and Password Matched, Login Successful")
                 logged_in=True
-                return redirect('/')
+                return redirect('/account')
             else:
                 print("Password Not matched")
                 message='Invalid Email or Password!'
@@ -131,13 +132,77 @@ def save_picture(form_picture):
     # print(picture_fn)
     return picture_fn
 
+def allowed_file(filename):
+    return '.' in filename and filename.rsplit('.', 1)[1].lower() in {'jpg', 'png', 'jpeg', 'gif'}
+
 @app.route('/account', methods=['GET','POST'])
 def account():
     print(f"Logged In : {logged_in}")
+    oldpass=None
     if request.method == "POST":
         # pic=save_picture(request.form.get("image_file"))
         # print("The IMage File PAth given is :", pic)
-        print("the image is :",request.form.get("image_file"))
-        pic = save_picture(request.form.get("image_file"))
-        print("received picture path :",pic)
-    return render_template('account.html', title='Account', user=logged_in_detail, logged_in=logged_in)
+        print("Files Extraced :",request.files)
+        print("The user is :",logged_in_detail['first_name'],logged_in_detail['last_name'])
+        # if 'image_file' not in request.files:
+        #     print('No file part')
+        #     return redirect(request.url)
+        # file = request.files['image_file']
+        # print(file)
+        # if file.filename == '':
+        #     flash('No selected file')
+        #     return redirect(request.url)
+        # if file and allowed_file(file.filename):
+        #     filename = secure_filename(file.filename)
+        #     file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+        #     print('File Saved to',app.config['UPLOAD_FOLDER'])
+            #return redirect(url_for('uploaded_file',filename=filename))
+        # pic = save_picture(request.form.get("image_file"))
+        # print("received picture path :",pic)
+
+        fname=request.form.get('fname')
+        lname=request.form.get('lname')
+        email=request.form.get('email')
+        mobile=request.form.get('mobile')
+        uname=request.form.get('uname')
+        oldpass=request.form.get('oldpass')
+        newpass=request.form.get('newpass')
+        confpass=request.form.get('confpass')
+        
+        if crypt.check_password_hash(logged_in_detail["password"], oldpass):
+            print("Old Password Entered Correctly")
+            print("Details Entered")
+            print("Name :",fname,lname)
+            print("Email :",email)
+            print("Mobile :",mobile)
+            print("Username :",uname)
+            print("Password :",oldpass)
+            print(newpass,' = ',confpass,' : ',newpass==confpass)
+            print("We get",request.files.getlist('image_files'),"as File")
+            # image=request.files.getlist('image_file')[0]
+            # print("And we get",image,"as File with filename :",image.filename)
+            # print("We Also get",request.files['image_file'],"of type :",type(request.files['image_file']))
+            if request.files.getlist('image_file'):
+                image=request.files.getlist('image_file')[0]
+                print("The new image path is :",os.path.join(app.config['UPLOAD_FOLDER'],image.filename))
+                print("And we get",image,"as File with filename :",image.filename)
+                print("We Also get",request.files['image_file'],"of type :",type(request.files['image_file']))
+                _, file_ext=os.path.splitext(image.filename)
+                print("Extracted file extention :",file_ext)
+                random_filename=secrets.token_hex(8)
+                print("Random file name generated :",random_filename)
+                new_filename=random_filename+file_ext
+                print("New file name :",new_filename)
+                print("The uploading folder path is :",app.config['UPLOAD_FOLDER'])
+                print("The root path is",app.root_path.replace('\\','/'))
+                new_file_path=os.path.join(app.config['UPLOAD_FOLDER'],new_filename)
+                print("The new path to store the image : ",new_file_path)
+                image.save(new_file_path)   #this line creates an error (FileNotFoundError)
+                print("Image Saved!!!")
+            else:
+                print("No File Selected!")
+        if newpass == confpass:
+            print("New Password is safe")
+        else:
+            print("Password Doesn\'t Match")
+    return render_template('account.html', title='Account', user=logged_in_detail, logged_in=logged_in, oldpass=oldpass)

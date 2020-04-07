@@ -2,14 +2,41 @@
 
 {% block title %}{{ user["first_name"] }}{% endblock %}
 
+{% block css %}
+<style>
+.card{
+    margin: 20px auto;
+}
+</style>
+{% endblock %}
+
+
 {% block body %}
 <!-- <br><br><br><br><br>{{ user }}<br><br><br><br><br> -->
-<form method="post">
-    <div class="row row-col-3" style="margin: 75px 50px;">
+<form method="post" enctype="multipart/form-data">
+    <div class="row row-col-3" style="margin: 75px 50px; background-color: rgba(65, 146, 179, 0.1);">
         {% if logged_in %}
         <div class="col">
             <div class="card">
-                <div class="card-body text-center">1</div>
+                <div class="card-body" style="padding: 50px;">
+                    <h2 class="text-center">Personal Information</h2><br>
+                    <div class="form-group">
+                        <label for="fname">First Name :</label>
+                        <input type="text" class="form-control" name="fname" id="fname" aria-describedby="fnameID" value="{{ user['first_name'] }}" style="background-color: white;" disabled>
+                    </div>
+                    <div class="form-group">
+                        <label for="lname">Last Name :</label>
+                        <input type="text" class="form-control" name="lname" id="lname" aria-describedby="lnameID" value="{{ user['last_name'] }}" style="background-color: white;" disabled>
+                    </div>
+                    <div class="form-group">
+                        <label for="email">Email :</label>
+                        <input type="email" class="form-control" name="email" id="email" aria-describedby="emailID" value="{{ user['email'] }}">
+                    </div>
+                    <div class="form-group">
+                        <label for="mobile">Mobile :</label>
+                        <input type="text" class="form-control" name="mobile" id="mobile" aria-describedby="mobileID" value="{{ user['mobile'] }}">
+                    </div>
+                </div>
             </div>
         </div>
         <div class="col">
@@ -29,17 +56,41 @@
         </div>
         <div class="col">
             <div class="card">
-                <div class="card-body">3</div>
-                <form method="post">
-                    <button class="btn btn-danger">Save</button>
-                </form>
+                <div class="card-body" style="padding: 50px;">
+                    <h2 class="text-center">Login Information</h2><br>
+                    <div class="form-group">
+                        <label for="uname">Username :</label>
+                        <input type="text" class="form-control" name="uname" id="uname" aria-describedby="unameID" value="{{ user['username'] }}">
+                    </div>
+                </div>
                 <!-- <button type="submit" class="btn btn-danger">Save</button> -->
             </div>
+            <div class="card">
+                <div class="card-body" style="padding: 50px;">
+                    <h2 class="text-center">Change Password</h2><br>
+                    <div class="form-group">
+                      <label for="oldpass">Old Password</label>
+                      <input type="password" class="form-control" name="oldpass" id="oldpass" placeholder="Enter Old Password">
+                    </div>
+                    <div class="form-group">
+                      <label for="newpass">New Password</label>
+                      <input type="password" class="form-control" name="newpass" id="newpass" placeholder="Enter New Password">
+                    </div>
+                    <div class="form-group">
+                      <label for="confpass">Confirm New Password</label>
+                      <input type="password" class="form-control" name="confpass" id="confpass" placeholder="Confirm Password">
+                    </div>
+                </div>
+            </div>
+            <button class="btn btn-danger" style="margin: 10px; float: right;">Save</button>
         </div>
         {% else %}
         <div class="card mx-auto d-block">
             <div class="card-body text-center" style="padding: 50px; margin: 50px;">
-                <h3>First Log In to view contents of this page.!</h3>
+                <h3>First Log In to view contents of this page.!</h3><br>
+                <form method="POST" class="text-center">
+                    <a href="/login"><button type="button" class="btn btn-danger col-sm-6 text-center rounded-pill">Login Now</button></a>
+                </form>
             </div>
         </div>
         {% endif %}

@@ -5,6 +5,7 @@ import pymongo
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = '8946d71d0200e86083be400cb72e4700'
+app.config['UPLOAD_FOLDER']='/static/profile_pics/'
 
 crypt = Bcrypt(app)
 # login_mgr = LoginManager(app)
