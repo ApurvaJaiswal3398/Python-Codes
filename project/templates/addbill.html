@@ -1,0 +1,160 @@
+{% extends 'layout.html' %}
+
+{% block title %}Add Billing Details{% endblock %}
+
+{% block css %}
+<style>
+    .card{
+        margin: 20px auto;
+    }
+    .padding-50{
+        padding: 50px;
+    }
+    .padding-5{
+        padding: 5px;
+    }
+    .border-1{
+        border: 1px solid;
+    }
+    .border-top-2{
+        border-top: 2px solid;
+    }
+    .border-bottom-2{
+        border-bottom: 2px solid;
+    }
+    .border-left-2{
+        border-left: 2px solid;
+    }
+    .border-right-2{
+        border-right: 2px solid;
+    }
+    .margin-top-bottom-20{
+        margin: 20px auto;
+    }
+    .margin-top-bottom-50{
+        margin: 50px auto;
+    }
+    .delete{
+        display: block;
+        color: #000;
+        text-decoration: none;
+        position: absolute;
+        background: #EEEEEE;
+        font-weight: bold;
+        padding: 0px 3px;
+        border: 1px solid;
+        left: -20px;
+        font-family: Verdana;
+        font-size: 12px;
+    }
+</style>
+{% endblock %}
+
+{% block body %}
+<br><br><br><br>
+{% if message != None and message != '\n' %}
+<div class="row" style="margin: 70px 70px -30px;">
+    <div class="col-sm-12 alert alert-danger" role="alert">
+        {{ message }}
+    </div>
+</div>
+{% endif %}
+<div class="card padding-50" style="margin :auto 300px">
+    <div class="row-col">
+        <div class="row">
+            <div class="col bg-dark text-light" style="text-align: center; font-size: x-large;">Invoice</div>
+        </div>
+        <div class="row margin-top-bottom-50">
+            <div class="col">
+                Company Name<br>
+                Comapny Address Line 1<br>
+                Company Address Line 2
+            </div>
+            <div class="col"></div>
+            <div class="col">
+                <img src="a.jpg" class="border-1" style="float: right;" alt="Company Logo">
+            </div>
+        </div>
+        <hr width="70%">
+        <div class="row margin-top-bottom-50">
+            <div class="col">
+                <div class="form-group">
+                    <table style="padding: 5px;">
+                        <tr>
+                            <td><label for="cname">Customer Name : </label></td>
+                            <td><input type="text" name="cname" id="cname" style="width: fit-content;"></td>
+                        </tr>
+                        <tr>
+                            <td><label for="mob">Customer Mobile : </label></td>
+                            <td><input type="text" name="mob" id="mob" style="width: fit-content;"></td>
+                        </tr>
+                        <tr>
+                            <td><label for="cartid">Assigned Cart ID : </label></td>
+                            <td><input type="text" style="width: 70%; background-color: transparent;" name="cartid" id="cartid" value="{% if cid %}{{ cid }}{% endif %}" disabled></td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+            <div class="col"></div>
+            <div class="col">
+                <div class="form-group">
+                    <table style="float: right; padding: 5px; text-align: right;">
+                        <tr>
+                            <td><label for="billid">Bill ID : </label></td>
+                            <td><input type="text" style="width: 40%; background-color: transparent;" name="billid" id="billid" value="{% if billid %}{{ billid }}{% endif %}" disabled></td>
+                        </tr>
+                        <tr>
+                            <td><label for="assignid">Assignment ID : </label></td>
+                            <td><input type="text" style="width: 40%; background-color: transparent;" name="assignid" id="assignid" value="{% if assignid %}{{ assignid }}{% endif %}" disabled></td>
+                        </tr>
+                        <tr>
+                            <td><label for="date">Date : </label></td>
+                            <td><input type="date" style="width: fit-content; background-color: transparent; border:0px; margin: auto 10px;" name="date" id="date" value="{% if date %}{{ date }}{% endif %}" disabled></td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <div class="row margin-top-bottom-20">
+            <div class="col">
+                <table style="width: 100%;">
+                    <tr class="border-top-2 border-bottom-2">
+                        <th>Product ID</th>
+                        <th>Product Name</th>
+                        <th>Price</th>
+                        <th class="border-left-2 border-right-2">Quantity</th>
+                        <th>Amount</th>
+                    </tr>
+                    {% for i in cc.find({"assign_id":assignid}) %}
+                    <tr>
+                        <td class="padding-5"><a class="delete" href="#">X</a>{{ i['product_id'] }}</td>
+                        <td class="padding-5">{{ prd.find_one({"_id":i['product_id']})['name'] }}</td>
+                        <td class="padding-5">{{ prd.find_one({"_id":i['product_id']})['price'] }}</td>
+                        <td class="padding-5 border-left-2 border-right-2">{{ i['quantity'] }}</td>
+                        <td class="padding-5"></td>
+                    </tr>
+                    {% endfor %}
+                    <tr class="border-top-2 border-bottom-2">
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td class="border-left-2 border-right-2">total quantity</td>
+                        <td>total amount</td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+        <hr width="70%">
+        <div class="row">
+            <div class="col margin-top-bottom-50" style="text-align: center;">TERMS
+                <div style="text-align: center; font-size: small;">The Products Won't Be Returned Once Bought.</div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block js %}
+<script>
+</script>
+{% endblock %}

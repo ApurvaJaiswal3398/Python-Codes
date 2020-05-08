@@ -1,0 +1,186 @@
+{% extends 'layout.html' %}
+
+{% block title %}Add Assigning Cart Details{% endblock %}
+
+{% block css %}
+<style>
+    .card{
+        margin: 20px auto;
+    }
+</style>
+{% endblock %}
+
+{% block bodyevent %}onload="setdate()"{% endblock %}
+
+{% block body %}
+{% if message != None and message != '\n' %}
+<div class="row" style="margin: 70px 70px -30px;">
+    <div class="col-sm-12 alert alert-danger" role="alert">
+        {{ message }}
+    </div>
+</div>
+{% endif %}
+<div class="row row-col-6" style="margin: 75px 50px; background-color: rgba(65, 146, 179, 0.1);">
+    <div class="col">
+        <div class="card">
+            <div class="card-body" style="padding: 50px;">
+                <form method="post" enctype="multipart/form-data">
+                    <h2 class="text-center">Cart Assignment Details</h2><br>
+                    <div class="form-group">
+                        <label for="assignid">Assignment Id :</label>
+                        <input type="text" class="form-control" name="assignid" id="assignid" style="width: fit-content;" value="{{ aid }}" disabled>
+                    </div>
+                    <div class="form-group">
+                        <label for="cid">Cart Id :</label>
+                        <select class="form-control" name="cartid" id="cartid" onchange="selectvalue()" style="width: 200px;" {% if cartid %}disabled{% endif %}>
+                            <option>1</option>
+                            <option>2</option>
+                            <option>3</option>
+                            <option>4</option>
+                            <option>5</option>
+                            <option>6</option>
+                            <option>7</option>
+                            <option>8</option>
+                            <option>9</option>
+                            <option>10</option>
+                        </select>
+                        <input type="text" class="form-control" name="cid" id="cid" style="width: fit-content; display: nne;" value="{% if cartid %}{{ cartid }}{% endif %}">
+                    </div>
+                    <div class="form-group">
+                        <label for="used_date">Used Date :</label>
+                        <input type="date" class="form-control" name="used_date" id="used_date" onchange="selectdate()" style="width: fit-content;" value="">
+                        <input type="text" class="form-control" name="date" id="date" style="width: fit-content; display: nne;" value="">
+                    </div>
+                    <div class="form-group row-col-6">
+                        <table style="border: 0px;">
+                            <tr>
+                                <td><label for="pid">Select Product :</label>
+                                    <select class="form-control" name="pid" id="pid" onchange="selectproduct()" style="width: 200px;">
+                                    {% for i in cst.find() %}
+                                    <option>{{ i["_id"] }}</option>
+                                    {% endfor %}
+                                </select></td>
+                                <td>&nbsp; &nbsp; &nbsp; </td>
+                                <td><label for="price">Price :</label>
+                                    <input type="text" class="form-control" name="price" id="price" style="width: fit-content; display: nne;" value="">
+                                </td>
+                            </tr>
+                        </table>
+                        <input type="text" class="form-control" name="prodid" id="prodid" style="width: fit-content; display: nne;" value="">
+                    </div>
+                    <div class="form-group">
+                        <label for="quantity">Quantity :</label>
+                        <input type="number" class="form-control" name="quantity" id="quantity" onchange="selectqty()" style="width: fit-content;" min="1" value="1">
+                        <input type="text" class="form-control" name="qty" id="qty" style="width: fit-content; display: nne;" value="1">
+                    </div>
+                    <div class="form-group">
+                        <label for="bill">Billing :</label>
+                        <div class="form-check form-check-inline">
+                            <label class="form-check-label">
+                                <input class="form-check-input" type="radio" name="billing" id="billyes" value="True" onchange="selectbillingstatus()"> Done &nbsp; &nbsp;
+                                <input class="form-check-input" type="radio" name="billing" id="billno" value="False" onchange="selectbillingstatus()"> To Be Done
+                            </label>
+                        </div>
+                        <input type="text" class="form-control" name="bill" id="bill" style="width: fit-content; display: nne;" value="">
+                    </div>
+                    <button class="btn btn-danger" style="margin: 10px;">Add More Products</button>
+                    <button class="btn btn-danger" style="margin: 10px;" onclick="proceedtobilling()">Proceed to Billing</button><br>
+                    <input type="text" id="ptb" name="ptb" value="">
+                </form>
+            </div>
+        </div>
+    </div>
+    <div class="col">
+        <div class="card" style="background-color: transparent; border: none;">
+            <a href="/dashboard"><button type="button" class="btn btn-outline-primary" style="margin: 10px; float: right;">Back to Dashboard</button></a>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block js %}
+<script>
+    function selectvalue()
+    {
+        var s=document.getElementById('cartid');
+        var t=document.getElementById('cid');
+        t.value=s.options[s.selectedIndex].text;
+        alert("the Selected Index is "+s.selectedIndex)
+    }
+    
+    function selectproduct(prod)
+    {
+        var s=document.getElementById('pid');
+        var t=document.getElementById('prodid');
+        var p=document.getElementById('price');
+        t.value=s.options[s.selectedIndex].text;
+    }
+    
+    function selectdate()
+    {
+        var s=document.getElementById('used_date');
+        var t=document.getElementById('date');
+        t.value=s.value;
+    }
+    
+    function selectqty()
+    {
+        var s=document.getElementById('quantity');
+        var t=document.getElementById('qty');
+        t.value=s.value;
+    }
+    
+    function setvalue()
+    {
+        var s=document.getElementById("cartid");
+        var t=document.getElementById('cid');
+        for( var i=0;i<s.options.length;i++)
+        {
+            if(s.options[i].text==t.value)
+            {
+                s.options[i].selected=true;
+                return;
+            }
+        }
+    }
+    
+    function selectbillingstatus()
+    {
+        var s1=document.getElementById('billyes');
+        var s2=document.getElementById('billno');
+        var t=document.getElementById('bill');
+        if(s1.checked === true)
+        t.value=s1.value;
+        else
+        t.value=s2.value;
+        
+    }
+    
+    function setdate()
+    {
+        var d=new Date();
+        var y=d.getFullYear().toString();
+        var m=d.getMonth()+1;
+        var mm='';
+        var ddd=''
+        var dd=d.getDate().toString();
+        if(m<10)    mm='0'+m.toString();
+        else    mm=m.toString();
+        if(dd<10)    ddd='0'+dd.toString();
+        else    ddd=dd.toString();
+        document.getElementById('used_date').defaultValue=y+'-'+mm+'-'+ddd;
+        document.getElementById('date').value=document.getElementById('used_date').defaultValue;
+        document.getElementById('billno').checked=true;
+        document.getElementById('bill').value="False";
+        document.getElementById('ptb').value="";
+        document.getElementById('price').value="";
+        setvalue();
+    }
+    
+    function proceedtobilling()
+    {
+        alert("Proceeding to billing!")
+        document.getElementById('ptb').value="Proceed";
+    }
+</script>
+{% endblock %}

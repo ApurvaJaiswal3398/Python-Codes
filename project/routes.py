@@ -1,9 +1,11 @@
 from flask import render_template, url_for, redirect, request, flash
 from project import app, crypt, db, Users, Carts, Products, Customer_Cart, Billing
 import secrets
+import random
 import os
 from PIL import Image
 from werkzeug.utils import secure_filename
+from datetime import date
 
 logged_in = False
 logged_in_detail = None
@@ -116,21 +118,21 @@ def logout():
     print(f"Logged in : {logged_in}")
     return redirect('/login')
 
-def save_picture(form_picture):
-    random_hex = secrets.token_hex(8)
-    print("random hex :",random_hex)
-    _, f_ext = os.path.splitext(form_picture)
-    picture_fn = random_hex + f_ext
-    print("picture name :",picture_fn)
-    picture_path = os.path.join(app.root_path, 'static/profile_pics', picture_fn).replace('\\',"/")
-    print("picture path :",picture_path)
-    #form_picture.save(picture_path)
-    output_size = (125, 125)
-    # i = Image.open(picture_path)
-    # i.thumbnail(output_size)
-    # i.save(picture_path)
-    # print(picture_fn)
-    return picture_fn
+# def save_picture(form_picture):
+#     random_hex = secrets.token_hex(8)
+#     print("random hex :",random_hex)
+#     _, f_ext = os.path.splitext(form_picture)
+#     picture_fn = random_hex + f_ext
+#     print("picture name :",picture_fn)
+#     picture_path = os.path.join(app.root_path, 'static/profile_pics', picture_fn).replace('\\',"/")
+#     print("picture path :",picture_path)
+#     #form_picture.save(picture_path)
+#     output_size = (125, 125)
+#     i = Image.open(picture_path)
+#     i.thumbnail(output_size)
+#     i.save(picture_path)
+#     print(picture_fn)
+#     return picture_fn
 
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in {'jpg', 'png', 'jpeg', 'gif'}
@@ -138,33 +140,21 @@ def allowed_file(filename):
 @app.route('/account', methods=['GET','POST'])
 def account():
     print(f"Logged In : {logged_in}")
+    global logged_in_detail
+    email=None
+    mobile=None
+    uname=None
     oldpass=None
+    imgpath=None
+    newvalues={}
     if request.method == "POST":
-        # pic=save_picture(request.form.get("image_file"))
-        # print("The IMage File PAth given is :", pic)
-        print("Files Extraced :",request.files)
-        print("The user is :",logged_in_detail['first_name'],logged_in_detail['last_name'])
-        # if 'image_file' not in request.files:
-        #     print('No file part')
-        #     return redirect(request.url)
-        # file = request.files['image_file']
-        # print(file)
-        # if file.filename == '':
-        #     flash('No selected file')
-        #     return redirect(request.url)
-        # if file and allowed_file(file.filename):
-        #     filename = secure_filename(file.filename)
-        #     file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
-        #     print('File Saved to',app.config['UPLOAD_FOLDER'])
-            #return redirect(url_for('uploaded_file',filename=filename))
-        # pic = save_picture(request.form.get("image_file"))
-        # print("received picture path :",pic)
-
+        # print("Files Extraced :",request.files)
+        # print("The user is :",logged_in_detail['first_name'],logged_in_detail['last_name'])
         fname=request.form.get('fname')
         lname=request.form.get('lname')
         email=request.form.get('email')
-        mobile=request.form.get('mobile')
-        uname=request.form.get('uname')
+        mobile=request.form.get('mobile').strip()
+        uname=request.form.get('uname').strip()
         oldpass=request.form.get('oldpass')
         newpass=request.form.get('newpass')
         confpass=request.form.get('confpass')
@@ -178,31 +168,453 @@ def account():
             print("Username :",uname)
             print("Password :",oldpass)
             print(newpass,' = ',confpass,' : ',newpass==confpass)
-            print("We get",request.files.getlist('image_files'),"as File")
-            # image=request.files.getlist('image_file')[0]
-            # print("And we get",image,"as File with filename :",image.filename)
-            # print("We Also get",request.files['image_file'],"of type :",type(request.files['image_file']))
+            # print("We get",request.files.getlist('image_files'),"as File")
             if request.files.getlist('image_file'):
                 image=request.files.getlist('image_file')[0]
-                print("The new image path is :",os.path.join(app.config['UPLOAD_FOLDER'],image.filename))
+                # print("The new image path is :",os.path.join(app.config['UPLOAD_FOLDER'].replace('\\','/'),image.filename))
                 print("And we get",image,"as File with filename :",image.filename)
-                print("We Also get",request.files['image_file'],"of type :",type(request.files['image_file']))
                 _, file_ext=os.path.splitext(image.filename)
-                print("Extracted file extention :",file_ext)
+                # print("Extracted file extention :",file_ext)
                 random_filename=secrets.token_hex(8)
-                print("Random file name generated :",random_filename)
+                # print("Random file name generated :",random_filename)
                 new_filename=random_filename+file_ext
                 print("New file name :",new_filename)
-                print("The uploading folder path is :",app.config['UPLOAD_FOLDER'])
-                print("The root path is",app.root_path.replace('\\','/'))
+                # print("The uploading folder path is :",app.config['UPLOAD_FOLDER'].replace('\\','/'))
+                # print("The root path is",app.root_path.replace('\\','/'))
                 new_file_path=os.path.join(app.config['UPLOAD_FOLDER'],new_filename)
                 print("The new path to store the image : ",new_file_path)
-                image.save(new_file_path)   #this line creates an error (FileNotFoundError)
+                image.save(new_file_path)
+                i = Image.open(new_file_path)
+                output_size = (200, 200)
+                i.thumbnail(output_size)
+                i.save(new_file_path)
+                imgpath="/static/profile_pics/"+new_filename
+                print("imgpath : "+imgpath)
+                print(i)
                 print("Image Saved!!!")
             else:
                 print("No File Selected!")
-        if newpass == confpass:
-            print("New Password is safe")
+            
+            if newpass == confpass and newpass !='' and confpass!='' :
+                newvalues['password']=crypt.generate_password_hash(newpass).decode('utf-8')
+                print("Hash of New Password created :",newvalues['password'])
+                print("New Password is safe")
+            else:
+                print("Password Doesn\'t Match")
+            
+            if email and email != logged_in_detail['email']:
+                newvalues['email']=email
+            else:
+                newvalues['email']=logged_in_detail['email']
+            
+            if mobile and mobile != logged_in_detail['mobile']:
+                newvalues['mobile']=mobile
+            else:
+                newvalues['mobile']=logged_in_detail['mobile']
+            
+            if uname and uname != logged_in_detail['username']:
+                newvalues['username']=uname
+            else:
+                newvalues['username']=logged_in_detail['username']
+            
+            if imgpath:
+                newvalues['image_file']=imgpath
+            else:
+                newvalues['image_file']=logged_in_detail['image_file']
+            
+            print("The Data Created :", newvalues)
+            print("Data  Created for : ", logged_in_detail['first_name'])
+            x=Users.update_one({'first_name': logged_in_detail['first_name']}, {'$set': newvalues})
+            if x.modified_count:
+                print("Changes Saved!")
+            else:
+                print("Any Error Occured in saving the Changes")
+            logged_in_detail=check_data(newvalues['email'])
+            print("Changed Logged in Data,",logged_in_detail['first_name'],logged_in_detail['image_file'])
+    pre_data = {"email": email, "mobile": mobile, "uname": uname}
+    print('Logged in Data :',logged_in_detail['first_name'],logged_in_detail['last_name'], logged_in_detail['image_file'])
+    return render_template('account.html', title='Account', user=logged_in_detail, logged_in=logged_in, oldpass=oldpass, pd=pre_data)
+
+@app.route('/add_user', methods=['GET','POST'])
+def add_user():
+    message=None
+    print(f"Logged In : {logged_in}")
+    User_cursor = Users.find().sort("username")
+    if request.method == 'POST':
+        username=request.form.get('uname')
+        if username:
+            message=None
+            print("Username to be Edited :",username)
+            if Users.find_one({'username':username}):
+                print("The Data found :",Users.find_one({'username':username}))
+            else:
+                message='Invalid Username!'
+                print("Enter a Valid Username")
         else:
-            print("Password Doesn\'t Match")
-    return render_template('account.html', title='Account', user=logged_in_detail, logged_in=logged_in, oldpass=oldpass)
+            print("Please Enter a Username")
+    return render_template('addusers.html', usrcrsr=Users, message=message)
+
+@app.route('/add_cart', methods=['GET','POST'])
+def add_cart():
+    message=None
+    newvalue={}
+    print(f"Logged In : {logged_in}")
+    if request.method == 'POST':
+        message='\n'
+        if request.form.get('cid') and request.form.get('cid') != '':
+            cid=int(request.form.get('cid'))
+        else:
+            cid=None
+        status=request.form.get('status')
+        use=request.form.get('use')
+        if cid != '' and cid != None:
+            newvalue['_id']=cid
+        else:
+            message = message + 'Select a Cart ID! | '
+        
+        if status != '':
+            newvalue['status']=status
+        else:
+            message = message + 'Select the Cart Status! | '
+        
+        if use != '':
+            newvalue['use']=use
+        else:
+            message = message + 'Select the Usage Status!'
+        print('New Values going to be inserted : ',newvalue)
+        if message == '\n':
+            print("'"+message+"'")
+            x = Carts.insert_one(newvalue)
+            print("The Data Inserted for ID :",x.inserted_id)
+            return redirect('/dashboard')
+        else:
+            print(f"The Message = '{message}'")
+    return render_template('addcart.html', message=message)
+
+@app.route('/cart_details', methods=['GET','POST'])
+def cart_details():
+    message=None
+    print(f"Logged In : {logged_in}")
+    Cart_cursor = Carts.find().sort('_id')
+    if request.method == 'POST':
+        cartid=request.form.get('cid')
+        if cartid:
+            message=None
+            print("Cart Id to be Edited :",cartid)
+            x=Carts.find_one({'_id':int(cartid)})
+            if x:
+                print("The Data found :",x)
+                return redirect(f'/update_cart/{cartid}')
+            else:
+                message='Invalid Cart Id!'
+                print("Enter a Valid Cart Id")
+        else:
+            print("Please Enter a Cart Id")
+    return render_template('carts.html', crtcrsr=Carts, message=message)
+
+@app.route('/update_cart/<int:cid>', methods=['GET','POST'])
+def update_cart(cid):
+    print(f"Logged In : {logged_in}")
+    print("Data to be Updated :",cid,"with type : ",type(cid))
+    x=Carts.find_one({'_id':int(cid)})
+    if request.method == 'GET':
+        if x:
+            print("Data Present for id :",cid)
+            return render_template('updatecart.html', cid=cid, cdata=x)
+    else:
+        newvalue={}
+        oldvalue={'_id':cid}
+        status=request.form.get('status')
+        use=request.form.get('use')
+        newvalue['_id']=cid
+        newvalue['status']=status
+        newvalue['use']=use
+        print("We Get the Update Values as ",newvalue)
+        x=Carts.update_one(oldvalue,{'$set':newvalue})
+        if x:
+            print("Cart Details Updated!!")
+            return redirect('/cart_details')
+        else:
+            print("Error in updating cart details")
+    return render_template('updatecart.html', cid=cid)
+
+@app.route('/add_product', methods=['GET','POST'])
+def add_product():
+    message=None
+    newvalue={}
+    print(f"Logged In : {logged_in}")
+    if request.method == 'POST':
+        message='\n'
+        if request.form.get('prodid') and request.form.get('prodid') != '':
+            prodid=request.form.get('prodid')
+        else:
+            prodid=None
+        prodname=request.form.get('prodname')
+        price=request.form.get('price')
+        barcode=request.form.get('barcode')
+        category=request.form.get('category')
+        if prodid != '' and prodid != None:
+            newvalue['_id']=prodid
+        else:
+            message = message + 'Enter a Product ID! | '
+        
+        if prodname != '':
+            newvalue['name']=prodname
+        else:
+            message = message + 'Enter the Product Name! | '
+        
+        if price != '':
+            newvalue['price']=price
+        else:
+            message = message + 'Enter the Product Price! | '
+           
+        if barcode != '':
+            newvalue['barcode']=barcode
+        else:
+            message = message + 'Enter the Barcode! | '
+        
+        if category != '':
+            newvalue['category']=category
+        else:
+            message = message + 'Enter the Product Category!'
+        print('New Values going to be inserted : ',newvalue)
+        if message == '\n':
+            print("'"+message+"'")
+            x = Products.insert_one(newvalue)
+            print("The Data Inserted for ID :",x.inserted_id)
+            return redirect('/dashboard')
+        else:
+            print(f"The Message = '{message}'")
+    return render_template('addproduct.html', message=message)
+
+@app.route('/product_details', methods=['GET','POST'])
+def product_details():
+    message=None
+    print(f"Logged In : {logged_in}")
+    Product_cursor = Products.find().sort('_id')
+    if request.method == 'POST':
+        prodid=request.form.get('pid')
+        if prodid:
+            message=None
+            print("Product Id to be Edited :",prodid)
+            x=Products.find_one({'_id':prodid})
+            if x:
+                print("The Data found :",x)
+                return redirect(f'/update_product/{prodid}')
+            else:
+                message='Invalid Product Id!'
+                print("Enter a Valid Product Id")
+        else:
+            print("Please Enter a Product Id")
+    return render_template('products.html', prdcrsr=Products, message=message)
+
+@app.route('/update_product/<prodid>', methods=['GET','POST'])
+def update_product(prodid):
+    print(f"Logged In : {logged_in}")
+    print("Data to be Updated :",prodid,"with type : ",type(prodid))
+    x=Products.find_one({'_id':prodid})
+    if request.method == 'GET':
+        if x:
+            print("Data Present for id :",prodid)
+            return render_template('updateproduct.html', prodid=prodid, pdata=x)
+    else:
+        newvalue={}
+        oldvalue={'_id':prodid}
+        name=request.form.get('name')
+        price=int(request.form.get('price'))
+        barcode=request.form.get('barcode')
+        category=request.form.get('category')
+        newvalue['_id']=prodid
+        newvalue['name']=name
+        newvalue['price']=price
+        newvalue['barcode']=barcode
+        newvalue['category']=category
+        print("We Get the Update Values as ",newvalue)
+        x=Products.update_one(oldvalue,{'$set':newvalue})
+        if x:
+            print("Product Details Updated!!")
+            return redirect('/product_details')
+        else:
+            print("Error in updating cart details")
+    return render_template('updateproduct.html', prodid=prodid)
+
+@app.route('/add_customer_cart', methods=['GET','POST'])
+def add_customer_cart():
+    message=None
+    newvalue={}
+    assignid='A' + str(random.randint(100,999))
+    while Customer_Cart.find_one({"_id":assignid}):
+        assignid='A' + str(random.randint(100,999))
+    print(f"Logged In : {logged_in}")
+    print(f"The Assigning ID : {assignid}")
+    if request.method == 'POST':
+        message='\n'
+        cid=request.form.get('cid')
+        used_date=request.form.get('used_date')
+        prodid=request.form.get('prodid')
+        quantity=request.form.get('quantity')
+        billing=request.form.get('bill')
+        newvalue['assign_id']=assignid
+        if cid != '':
+            newvalue['cart_id']=cid
+        else:
+            message = message + 'Select A Cart! | '
+
+        if used_date:
+            if used_date != '':
+                newvalue['used_date']=used_date
+            else:
+                print('Unretrievable Date!')
+        else:
+            newvalue['used_date']=str(date.today())
+        
+        if prodid != '':
+            newvalue['product_id']=prodid
+        else:
+            message = message + 'Select A Product ID! | '
+        
+        if quantity != '':
+            newvalue['quantity']=quantity
+        else:
+            message = message + 'Select the Date! | '
+        
+        if billing != '':
+            if billing == 'True':
+                newvalue['billing']=True
+            else:
+                newvalue['billing']=False
+        else:
+            message = message + 'Select the Billing Status!'
+        print('New Values going to be inserted : ',newvalue)
+        if message == '\n':
+            print("'"+message+"'")
+            x = Customer_Cart.insert_one(newvalue)
+            print("The Data Inserted for ID :",x.inserted_id)
+            return redirect(f'/add_more_product/{assignid}/{cid}')
+        else:
+            print(f"The Message = '{message}'")
+        if request.form.get('ptb'):
+            print("Proceeding to Billing!")
+            return redirect("/dashboard")
+    return render_template('addcustomercart.html', message=message, aid=assignid, cst=Products)
+
+@app.route('/add_more_product/<assignid>/<cartid>', methods=['GET','POST'])
+def add_more_product(assignid,cartid):
+    message=None
+    newvalue={}
+    # assignid='A' + str(random.randint(100,999))
+    # while Customer_Cart.find_one({"_id":assignid}):
+    #     assignid='A' + str(random.randint(100,999))
+    print(f"Logged In : {logged_in}")
+    print(f"The Assigning ID : {assignid}")
+    if request.method == 'POST':
+        message='\n'
+        cid=request.form.get('cid')
+        used_date=request.form.get('used_date')
+        prodid=request.form.get('prodid')
+        quantity=request.form.get('quantity')
+        billing=request.form.get('bill')
+        newvalue['assign_id']=assignid
+        if cid != '':
+            newvalue['cart_id']=cid
+        else:
+            message = message + 'Select A Cart! | '
+
+        if used_date:
+            if used_date != '':
+                newvalue['used_date']=used_date
+            else:
+                print('Unretrievable Date!')
+        else:
+            newvalue['used_date']=str(date.today())
+
+        if prodid != '':
+            newvalue['product_id']=prodid
+        else:
+            message = message + 'Select A Product ID! | '
+        
+        if quantity != '':
+            newvalue['quantity']=quantity
+        else:
+            message = message + 'Select the Date! | '
+        
+        if billing != '':
+            if billing == 'True':
+                newvalue['billing']=True
+            else:
+                newvalue['billing']=False
+        else:
+            message = message + 'Select the Billing Status!'
+        print('New Values going to be inserted : ',newvalue)
+        if message == '\n':
+            print("'"+message+"'")
+            x = Customer_Cart.insert_one(newvalue)
+            print("The Data Inserted for ID :",x.inserted_id)
+        else:
+            print(f"The Message = '{message}'")
+        if request.form.get('ptb'):
+            print("Proceeding to Billing!")
+            x=Customer_Cart.update_many({"assign_id":assignid},{'$set':{"billing":True}})
+            print("Data Modified Count :",x.modified_count)
+            return redirect(f"/add_bill/{assignid}")
+    return render_template('addcustomercart.html', message=message, aid=assignid, cartid=cartid, cst=Products)
+
+@app.route('/customer_cart_details', methods=['GET','POST'])
+def customer_cart_details():
+    message=None
+    print(f"Logged In : {logged_in}")
+    Product_cursor = Customer_Cart.find().sort('_id')
+    if request.method == 'POST':
+        ccid=request.form.get('ccid')
+        if ccid:
+            message=None
+            print("Cart Id to be Edited :",ccid)
+            if Customer_Cart.find_one({'_id':int(ccid)}):
+                print("The Data found :",Customer_Cart.find_one({'_id':int(ccid)}))
+            else:
+                message='Invalid Cart Id!'
+                print("Enter a Valid Cart Id")
+        else:
+            print("Please Enter a Cart Id")
+    return render_template('customercart.html', cccrsr=Customer_Cart, message=message)
+
+@app.route('/add_bill/<string:assignid>', methods=['GET','POST'])
+def add_bill(assignid):
+    message=None
+    newvalue={} 
+    billid='B' + str(random.randint(100,999))
+    while Customer_Cart.find_one({"_id":billid}):
+        billid='B' + str(random.randint(100,999))
+    cid=None
+    udate=None
+    if Customer_Cart.find_one({"assign_id":assignid}):
+        cid=Customer_Cart.find_one({"assign_id":assignid})['cart_id']
+    if Customer_Cart.find_one({"assign_id":assignid}):
+        udate=Customer_Cart.find_one({"assign_id":assignid})['used_date']
+    print('Cart Id : ',cid)
+    print(f"Logged In : {logged_in}")
+    print(f"The Assigning ID : {billid}")
+    return render_template('addbill.html', message=message, billid=billid, assignid=assignid, cid=cid, date=udate, cc=Customer_Cart, prd=Products)
+
+@app.route('/billing_details', methods=['GET','POST'])
+def billing_details():
+    message=None
+    print(f"Logged In : {logged_in}")
+    Product_cursor = Billing.find().sort('_id')
+    if request.method == 'POST':
+        billid=request.form.get('billid')
+        if billid:
+            message=None
+            print("BIll Id to be Edited :",billid)
+            if Billing.find_one({'_id':int(billid)}):
+                print("The Data found :",Billing.find_one({'_id':int(billid)}))
+            else:
+                message='Invalid BIll Id!'
+                print("Enter a Valid BIll Id")
+        else:
+            print("Please Enter a BIll Id")
+    return render_template('billing.html', billcrsr=Billing, message=message)
+
+@app.route('/invoice')
+def invoice():
+    return render_template('new.html')

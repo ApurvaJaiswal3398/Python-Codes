@@ -2,10 +2,11 @@ from flask import Flask
 from flask_bcrypt import Bcrypt
 from flask_login import LoginManager
 import pymongo
+import os
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = '8946d71d0200e86083be400cb72e4700'
-app.config['UPLOAD_FOLDER']='/static/profile_pics/'
+app.config['UPLOAD_FOLDER']=os.path.join(os.getcwd(),"project/static/profile_pics/").replace("\\",'/')
 
 crypt = Bcrypt(app)
 # login_mgr = LoginManager(app)

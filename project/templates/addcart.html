@@ -1,0 +1,111 @@
+{% extends 'layout.html' %}
+
+{% block title %}Add Cart Details{% endblock %}
+
+{% block css %}
+<style>
+    .card{
+        margin: 20px auto;
+    }
+</style>
+{% endblock %}
+
+{% block body %}
+{% if message != None and message != '\n' %}
+<div class="row" style="margin: 70px 70px -30px;">
+    <div class="col-sm-12 alert alert-danger" role="alert">
+        {{ message }}
+    </div>
+</div>
+{% endif %}
+<div class="row row-col-6" style="margin: 75px 50px; background-color: rgba(65, 146, 179, 0.1);">
+    <div class="col">
+        <div class="card">
+            <div class="card-body" style="padding: 50px;">
+                <form method="post" enctype="multipart/form-data">
+                    <h2 class="text-center">Cart Details</h2><br>
+                    <div class="form-group">
+                        <label for="cartid">Cart Id :</label>
+                        <select class="form-control" name="cartid" id="cartid" onchange="selectvalue()" style="width: 200px;">
+                            <option>1</option>
+                            <option>2</option>
+                            <option>3</option>
+                            <option>4</option>
+                            <option>5</option>
+                            <option>6</option>
+                            <option>7</option>
+                            <option>8</option>
+                            <option>9</option>
+                            <option>10</option>
+                        </select>
+                        <input type="text" class="form-control" name="cid" id="cid" aria-describedby="cartID" value="" style="display: none;">
+                    </div><br>
+                    <div class="form-group">
+                        <label for="status">Status :</label><br>
+                        <div class="form-check form-check-inline">
+                            <label class="form-check-label">
+                                <input class="form-check-input" type="radio" name="status" id="status1" value="Cart Active" onchange="selectstatus()"> Active &nbsp; &nbsp;
+                                <input class="form-check-input" type="radio" name="status" id="status2" value="Cart Unactive" onchange="selectstatus()"> Inactive
+                            </label>
+                        </div>
+                        <input type="text" class="form-control" name="status" id="status" aria-describedby="lnameID" value="" style="display: none;">
+                    </div><br>
+                    <div class="form-group">
+                        <label for="use">Usage :</label><br>
+                        <div class="form-check form-check-inline" id="div-usage">
+                            <label class="form-check-label">
+                                <input class="form-check-input" type="radio" name="use" id="useyes" value="Used" onchange="selectuse()"> Being Used &nbsp; &nbsp;
+                                <input class="form-check-input" type="radio" name="use" id="useno" value="Unused" onchange="selectuse()"> Unused
+                            </label>
+                        </div>
+                        <input type="text" class="form-control" name="use" id="use" aria-describedby="useID" value="" style="display: none;">
+                    </div>
+                    <button class="btn btn-danger" style="margin: 10px;">Save</button>
+                </form>
+            </div>
+        </div>
+    </div>
+    <div class="col">
+        <div class="card" style="background-color: transparent; border: none;">
+            <a href="/dashboard"><button type="button" class="btn btn-outline-primary" style="margin: 10px; float: right;">Back to Dashboard</button></a>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block js %}
+<script>
+    function selectvalue()
+    {
+        var s=document.getElementById('cartid');
+        var t=document.getElementById('cid');
+        t.value=s.options[s.selectedIndex].text;
+    }
+    
+    function selectstatus()
+    {
+        var s1=document.getElementById('status1');
+        var s2=document.getElementById('status2');
+        var t=document.getElementById('status');
+        document.getElementById('useyes').disabled=false;
+        if(s1.checked === true)
+        t.value=s1.value;
+        else
+        {   t.value=s2.value;
+            document.getElementById('useno').checked=true;
+            selectuse();
+            document.getElementById('useyes').disabled=true;
+        }
+    }
+    
+    function selectuse()
+    {
+        var u1=document.getElementById('useyes');
+        var u2=document.getElementById('useno');
+        var t=document.getElementById('use');
+        if(u1.checked === true)
+        t.value=u1.value;
+        else    t.value=u2.value;
+    }
+</script>
+{% endblock %}

@@ -348,10 +348,10 @@ input {
 
 @import url('https://fonts.googleapis.com/css?family=Roboto:300,400,500,700,900');
 
-* {
+/* * {
     margin: 0;
     padding: 0;
-}
+} */
 
 body {
     background: #f0f4f3;

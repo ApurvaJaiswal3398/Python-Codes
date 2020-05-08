@@ -1,0 +1,68 @@
+{% extends 'layout.html' %}
+
+{% block css %}
+<style>
+    .main{
+        margin: 10px;
+        margin-top: 50px;
+    }
+    
+    .sub-main{
+        margin:20px;
+        padding: 20px;
+    }
+</style>
+{% endblock %}
+
+{% block body %}
+<div class="container-fluid main">
+    {% if message != None %}
+    <div class="row" style="margin: 70px 70px -30px;">
+        <div class="col-sm-12 alert alert-danger" role="alert">
+            {{ message }}
+        </div>
+    </div>
+    {% endif %}
+    <div class="card" style="background-color: transparent; border: none;">
+        <a href="/dashboard"><button type="button" class="btn btn-outline-primary" style="margin: 10px; float: right;">Back to Dashboard</button></a>
+    </div>
+    <div class="sub-main">
+        <table class="table table-hover table-inverse table-responsive">
+            <thead class="thead-inverse">
+                <tr>
+                    <th>ID</th>
+                    <th>Assignment Id</th>
+                    <th>Cart Id</th>
+                    <th>Used Date</th>
+                    <th>Product Id</th>
+                    <th>Quantity</th>
+                    <th>Billing</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for i in cccrsr.find().sort("_id") %}
+                <tr>
+                    <td scope="row">{{ i["_id"] }}</td>
+                    <td>{{ i["assign_id"] }}</td>
+                    <td>{{ i["cart_id"] }}</td>
+                    <td>{{ i["used_date"] }}</td>
+                    <td>{{ i["product_id"] }}</td>
+                    <td>{{ i["quantity"] }}</td>
+                    <td>{{ i["billing"] }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    <div class="sub-main">
+        <form method="POST">
+            <div class="form-group">
+                <label for="ccid">Enter Cart Id to Edit Data</label>
+                <input type="text" class="form-control" name="ccid" id="ccid" align="right" aria-describedby="cartID" placeholder="Cart Id">
+                <small id="usernameId" class="form-text text-muted">Take help from the table above</small>
+                <button type="submit" name="modify" id="modify" class="btn btn-outline-primary" btn-lg btn-block">Proceed to Mdify</button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

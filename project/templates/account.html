@@ -4,9 +4,9 @@
 
 {% block css %}
 <style>
-.card{
-    margin: 20px auto;
-}
+    .card{
+        margin: 20px auto;
+    }
 </style>
 {% endblock %}
 
@@ -30,11 +30,11 @@
                     </div>
                     <div class="form-group">
                         <label for="email">Email :</label>
-                        <input type="email" class="form-control" name="email" id="email" aria-describedby="emailID" value="{{ user['email'] }}">
+                        <input type="email" class="form-control" name="email" id="email" aria-describedby="emailID" value="{% if pd['email'] %}{{ pd['email'] }}{% else %}{{ user['email'] }}{% endif %}">
                     </div>
                     <div class="form-group">
                         <label for="mobile">Mobile :</label>
-                        <input type="text" class="form-control" name="mobile" id="mobile" aria-describedby="mobileID" value="{{ user['mobile'] }}">
+                        <input type="text" class="form-control" name="mobile" id="mobile" aria-describedby="mobileID" value="{% if pd['mobile'] %}{{ pd['mobile'] }}{% else %}{{ user['mobile'] }}{% endif %}">
                     </div>
                 </div>
             </div>
@@ -48,7 +48,7 @@
                     <div class="form-group">
                         <label for="image_file">Choose Picture</label>
                         <input type="file" class="form-control-file btn-info" onchange="readURL(this);" name="image_file" id="image_file" accept="image/*" placeholder="Select A Picture" aria-describedby="imageID">
-                        <small id="imageID" class="form-text text-muted">Select a square image or it may distort</small>
+                        <small id="imageID" class="form-text text-muted">Select a square image or it may distort<br>current image : {{ user['image_file'] }}</small>
                         <!-- <input type='file' class="form-control-file btn-info" onchange="readURL(this);" name="image_file" id="image_file" placeholder="Select A Picture"/> -->
                     </div>
                 </div>
@@ -60,7 +60,7 @@
                     <h2 class="text-center">Login Information</h2><br>
                     <div class="form-group">
                         <label for="uname">Username :</label>
-                        <input type="text" class="form-control" name="uname" id="uname" aria-describedby="unameID" value="{{ user['username'] }}">
+                        <input type="text" class="form-control" name="uname" id="uname" aria-describedby="unameID" value="{% if pd['uname'] %}{{ pd['uname'] }}{% else %}{{ user['username'] }}{% endif %}">
                     </div>
                 </div>
                 <!-- <button type="submit" class="btn btn-danger">Save</button> -->
@@ -69,16 +69,16 @@
                 <div class="card-body" style="padding: 50px;">
                     <h2 class="text-center">Change Password</h2><br>
                     <div class="form-group">
-                      <label for="oldpass">Old Password</label>
-                      <input type="password" class="form-control" name="oldpass" id="oldpass" placeholder="Enter Old Password">
+                        <label for="oldpass">Old Password</label>
+                        <input type="password" class="form-control" name="oldpass" id="oldpass" placeholder="Enter Old Password">
                     </div>
                     <div class="form-group">
-                      <label for="newpass">New Password</label>
-                      <input type="password" class="form-control" name="newpass" id="newpass" placeholder="Enter New Password">
+                        <label for="newpass">New Password</label>
+                        <input type="password" class="form-control" name="newpass" id="newpass" placeholder="Enter New Password">
                     </div>
                     <div class="form-group">
-                      <label for="confpass">Confirm New Password</label>
-                      <input type="password" class="form-control" name="confpass" id="confpass" placeholder="Confirm Password">
+                        <label for="confpass">Confirm New Password</label>
+                        <input type="password" class="form-control" name="confpass" id="confpass" placeholder="Confirm Password">
                     </div>
                 </div>
             </div>

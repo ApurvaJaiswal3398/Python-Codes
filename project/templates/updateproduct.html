@@ -1,0 +1,51 @@
+{% extends 'layout.html' %}
+
+{% block title %}Update Product Details{% endblock %}
+
+{% block css %}
+<style>
+    .card{
+        margin: 20px auto;
+    }
+</style>
+{% endblock %}
+
+{% block body %}
+<div class="row row-col-6" style="margin: 75px 50px; background-color: rgba(65, 146, 179, 0.1);">
+    <div class="col">
+        <div class="card">
+            <div class="card-body" style="padding: 50px;">
+                <form method="post" enctype="multipart/form-data">
+                    <h2 class="text-center">Product Details</h2><br>
+                    <div class="form-group">
+                        <label for="prodid">Product Id :</label>
+                        <input type="text" class="form-control" name="prodid" id="prodid" aria-describedby="productID" value="{% if pdata %}{{ pdata['_id'] }}{% endif %}" disabled>
+                    </div>
+                    <div class="form-group">
+                        <label for="name">Status :</label><br>
+                        <input type="text" class="form-control" name="name" id="name" aria-describedby="nameID" value="{% if pdata %}{{ pdata['name'] }}{% endif %}">
+                    </div>
+                    <div class="form-group">
+                        <label for="price">Usage :</label><br>
+                        <input type="text" class="form-control" name="price" id="price" aria-describedby="priceID" value="{% if pdata %}{{ pdata['price'] }}{% endif %}">
+                    </div>
+                    <div class="form-group">
+                        <label for="barcode">Product Barcode :</label>
+                        <input type="text" class="form-control" name="barcode" id="barcode" aria-describedby="barcodeID" value="{% if pdata %}{{ pdata['barcode'] }}{% endif %}">
+                    </div>
+                    <div class="form-group">
+                        <label for="category">Product Category :</label>
+                        <input type="text" class="form-control" name="category" id="category" aria-describedby="categoryID" value="{% if pdata %}{{ pdata['category'] }}{% endif %}">
+                    </div>
+                    <button class="btn btn-danger" style="margin: 10px;">Save</button>
+                </form>
+            </div>
+        </div>
+    </div>
+    <div class="col">
+        <div class="card" style="background-color: transparent; border: none;">
+            <a href="/dashboard"><button type="button" class="btn btn-outline-primary" style="margin: 10px; float: right;">Back to Dashboard</button></a>
+        </div>
+    </div>
+</div>
+{% endblock %}

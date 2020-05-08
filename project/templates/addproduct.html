@@ -1,0 +1,90 @@
+{% extends 'layout.html' %}
+
+{% block title %}Add Product Details{% endblock %}
+
+{% block css %}
+<style>
+    .card{
+        margin: 20px auto;
+    }
+</style>
+{% endblock %}
+
+{% block body %}
+{% if message != None and message != '\n' %}
+<div class="row" style="margin: 70px 70px -30px;">
+    <div class="col-sm-12 alert alert-danger" role="alert">
+        {{ message }}
+    </div>
+</div>
+{% endif %}
+<div class="row row-col-6" style="margin: 75px 50px; background-color: rgba(65, 146, 179, 0.1);">
+    <div class="col">
+        <div class="card">
+            <div class="card-body" style="padding: 50px;">
+                <form method="post" enctype="multipart/form-data">
+                    <h2 class="text-center">Product Details</h2><br>
+                    <div class="form-group">
+                        <label for="prodid">Product Id :</label>
+                        <input type="text" class="form-control" name="prodid" id="prodid" aria-describedby="productID" value="">
+                    </div><br>
+                    <div class="form-group">
+                        <label for="prodname">Product Name :</label>
+                        <input type="text" class="form-control" name="prodname" id="prodname" aria-describedby="pnameID" value="">
+                    </div><br>
+                    <div class="form-group">
+                        <label for="price">Price :</label>
+                        <input type="text" class="form-control" name="price" id="price" aria-describedby="priceID" value="">
+                    </div><br>
+                    <div class="form-group">
+                        <label for="barcode">Barcode :</label>
+                        <input type="text" class="form-control" name="barcode" id="barcode" aria-describedby="barcodeID" value="">
+                    </div><br>
+                    <div class="form-group">
+                        <label for="category">Category :</label>
+                        <input type="text" class="form-control" name="category" id="category" aria-describedby="categoryID" value="">
+                    </div>
+                    <button class="btn btn-danger" style="margin: 10px;">Save</button>
+                </form>
+            </div>
+        </div>
+    </div>
+    <div class="col">
+        <div class="card" style="background-color: transparent; border: none;">
+            <a href="/dashboard"><button type="button" class="btn btn-outline-primary" style="margin: 10px; float: right;">Back to Dashboard</button></a>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block js %}
+<script>
+    function selectvalue()
+    {
+        var s=document.getElementById('prodid');
+        var t=document.getElementById('prodid');
+        t.value=s.options[s.selectedIndex].text;
+    }
+    
+    function selectstatus()
+    {
+        var s1=document.getElementById('status1');
+        var s2=document.getElementById('status2');
+        var t=document.getElementById('status');
+        if(s1.selected == true)
+        t.value=s1.value;
+        else    t.value=s2.value;
+        t.value = t.value + " " + s1.value + " " +s2.value
+    }
+    
+    function selectuse()
+    {
+        var u1=document.getElementById('useyes');
+        var u2=document.getElementById('useno');
+        var t=document.getElementById('use');
+        if(u1.selected === true)
+        t.value=u1.value;
+        else    t.value=u2.value;
+    }
+</script>
+{% endblock %}

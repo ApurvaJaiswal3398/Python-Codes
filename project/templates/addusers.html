@@ -1,0 +1,65 @@
+{% extends 'layout.html' %}
+
+{% block css %}
+<style>
+    .main{
+        margin: 10px;
+        margin-top: 50px;
+    }
+    
+    .sub-main{
+        margin:20px;
+        padding: 20px;
+    }
+</style>
+{% endblock %}
+
+{% block body %}
+<div class="container-fluid main">
+    {% if message != None %}
+    <div class="row" style="margin: 70px 70px -30px;">
+        <div class="col-sm-12 alert alert-danger" role="alert">
+            {{ message }}
+        </div>
+    </div>
+    {% endif %}
+    <div class="sub-main">
+        <table class="table table-hover table-inverse table-responsive">
+            <thead class="thead-inverse">
+                <tr>
+                    <th>ID</th>
+                    <th>Username</th>
+                    <th>First Name</th>
+                    <th>Last Name</th>
+                    <th>Mobile</th>
+                    <th>Email Id</th>
+                    <th>Image Path</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for i in usrcrsr.find().sort("username") %}
+                <tr>
+                    <td scope="row">{{ i["_id"] }}</td>
+                    <td>{{ i["username"] }}</td>
+                    <td>{{ i["first_name"] }}</td>
+                    <td>{{ i["last_name"] }}</td>
+                    <td>{{ i["mobile"] }}</td>
+                    <td>{{ i["email"] }}</td>
+                    <td>{{ i["image_file"] }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    <div class="sub-main">
+        <form method="POST">
+            <div class="form-group">
+                <label for="uname">Enter Username to Edit Data</label>
+                <input type="text" class="form-control" name="uname" id="uname" align="right" aria-describedby="usernameId" placeholder="Username">
+                <small id="usernameId" class="form-text text-muted">Take help from the table above</small>
+                <button type="submit" name="modify" id="modify" class="btn btn-outline-primary" btn-lg btn-block">Proceed to Mdify</button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

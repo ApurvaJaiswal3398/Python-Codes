@@ -101,14 +101,14 @@
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="#">
+                        <a class="nav-link" href="/invoice">
                             <span data-feather="file"></span>
                             Integrations
                         </a>
                     </li>
                 </ul>
                 
-                <h6 class="sidebar-heading d-flex justify-content-between align-items-center px-3 mt-4 mb-1 text-muted">
+                <!-- <h6 class="sidebar-heading d-flex justify-content-between align-items-center px-3 mt-4 mb-1 text-muted">
                     <span>Saved reports</span>
                     <a class="d-flex align-items-center text-muted" href="#" aria-label="Add a new report">
                         <span data-feather="plus-circle"></span>
@@ -139,7 +139,7 @@
                             Year-end sale
                         </a>
                     </li>
-                </ul>
+                </ul> -->
             </div>
         </nav>
         
@@ -158,7 +158,7 @@
                 </div>
             </div>
             
-            <canvas class="my-4 w-100" id="myChart" width="900" height="380"></canvas>
+            <!-- <canvas class="my-4 w-100" id="myChart" width="900" height="380"></canvas> -->
             
             <!-- <h2>Section title</h2>
             <div class="table-responsive">
@@ -315,6 +315,7 @@
                         {% endfor %}
                     </tbody>
                 </table>
+                <button type="button" class="btn btn-outline-primary" style="float: right; margin-right: 50px;">Add User</button>
                 </div>
             </div>
             <div id="CartTable" style="display: none;">
@@ -336,6 +337,8 @@
                             {% endfor %}
                         </tbody>
                     </table>
+                    <a href='/add_cart'><button type="button" class="btn btn-outline-primary" style="float: right; margin-right: 50px;">Add Cart</button></a>
+                    <a href='/cart_details'><button type="button" class="btn btn-outline-primary" style="float: right; margin-right: 5px;">Update Cart</button></a>
                 </div>
             </div>
             <div id="ProductTable" style="display: none;">
@@ -361,6 +364,8 @@
                             {% endfor %}
                         </tbody>
                     </table>
+                    <a href='/add_product'><button type="button" class="btn btn-outline-primary" style="float: right; margin-right: 50px;">Add Product</button></a>
+                    <a href='/product_details'><button type="button" class="btn btn-outline-primary" style="float: right; margin-right: 5px;">Update Product</button></a>
                 </div>
             </div>
             <div id="CCTable" style="display: none;">
@@ -369,23 +374,29 @@
                     <table class="table table-stripped table-sm">
                         <thead>
                             <th>ID</th>
+                            <th>Assignment Id</th>
                             <th>Cart Id</th>
                             <th>Used Date</th>
                             <th>Product Id</th>
+                            <th>Quantity</th>
                             <th>Billing</th>
                         </thead>
                         <tbody>
                             {% for i in cccrsr %}
                             <tr>
                                 <td>{{ i["_id"] }}</td>
+                                <td>{{ i["assign_id"] }}</td>
                                 <td>{{ i["cart_id"] }}</td>
                                 <td>{{ i["used_date"] }}</td>
                                 <td>{{ i["product_id"] }}</td>
+                                <td>{{ i["quantity"] }}</td>
                                 <td>{{ i["billing"] }}</td>
                             </tr>
                             {% endfor %}
                         </tbody>
                     </table>
+                    <a href='/add_customer_cart'><button type="button" class="btn btn-outline-primary" style="float: right; margin-right: 50px;">Add Customer Cart</button></a>
+                    <a href='/customer_cart_details'><button type="button" class="btn btn-outline-primary" style="float: right; margin-right: 5px;">Update Customer Cart</button></a>
                 </div>
             </div>
             <div id="BillingTable" style="display: none;">
@@ -411,6 +422,8 @@
                             {% endfor %}
                         </tbody>
                     </table>
+                    <a href='/add_bill'><button type="button" class="btn btn-outline-primary" style="float: right; margin-right: 50px;">Add Bill</button></a>
+                    <a href='/billing_details'><button type="button" class="btn btn-outline-primary" style="float: right; margin-right: 5px;">Update Bill</button></a>
                 </div>
             </div>
         </main>
