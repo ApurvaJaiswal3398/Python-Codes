@@ -10,10 +10,17 @@
 </style>
 {% endblock %}
 
+{% block spin_account %}<span class="spinner-grow spinner-grow-sm"></span>{% endblock %}
 
 {% block body %}
-<!-- <br><br><br><br><br>{{ user }}<br><br><br><br><br> -->
-<form method="post" enctype="multipart/form-data">
+{% if msg %}
+<div class="row" style="margin: 70px 70px -50px;">
+    <div class="col-sm-12 alert alert-success" role="alert">
+        {{ msg }}
+    </div>
+</div>       
+{% endif %}
+<form name="account" method="post" enctype="multipart/form-data">
     <div class="row row-col-3" style="margin: 75px 50px; background-color: rgba(65, 146, 179, 0.1);">
         {% if logged_in %}
         <div class="col">
@@ -30,14 +37,15 @@
                     </div>
                     <div class="form-group">
                         <label for="email">Email :</label>
-                        <input type="email" class="form-control" name="email" id="email" aria-describedby="emailID" value="{% if pd['email'] %}{{ pd['email'] }}{% else %}{{ user['email'] }}{% endif %}">
+                        <input type="email" class="form-control" name="email" id="email" aria-describedby="emailID" value="{% if pd['email'] %}{{ pd['email'] }}{% else %}{{ user['email'] }}{% endif %}" onblur="checkemail()" required>
                     </div>
                     <div class="form-group">
                         <label for="mobile">Mobile :</label>
-                        <input type="text" class="form-control" name="mobile" id="mobile" aria-describedby="mobileID" value="{% if pd['mobile'] %}{{ pd['mobile'] }}{% else %}{{ user['mobile'] }}{% endif %}">
+                        <input type="text" class="form-control" name="mobile" id="mobile" aria-describedby="mobileID" value="{% if pd['mobile'] %}{{ pd['mobile'] }}{% else %}{{ user['mobile'] }}{% endif %}" onblur="checkmobile()" required>
                     </div>
                 </div>
             </div>
+            <div style="float: left;"><b>Note: </b>To Save the Changes, Enter the password in the <b>Old Password</b> the click on <b>Save</b>.</div>
         </div>
         <div class="col">
             <div class="card">
@@ -60,7 +68,8 @@
                     <h2 class="text-center">Login Information</h2><br>
                     <div class="form-group">
                         <label for="uname">Username :</label>
-                        <input type="text" class="form-control" name="uname" id="uname" aria-describedby="unameID" value="{% if pd['uname'] %}{{ pd['uname'] }}{% else %}{{ user['username'] }}{% endif %}">
+                        <input type="text" class="form-control" name="uname" id="uname" aria-describedby="unameID" value="{% if pd['uname'] %}{{ pd['uname'] }}{% else %}{{ user['username'] }}{% endif %}" required>
+                        {% if umsg %}<small id="unameID" class="form-text text-muted">This Username is already taken. Enter Another Username.</small>{% endif %}
                     </div>
                 </div>
                 <!-- <button type="submit" class="btn btn-danger">Save</button> -->
@@ -70,15 +79,15 @@
                     <h2 class="text-center">Change Password</h2><br>
                     <div class="form-group">
                         <label for="oldpass">Old Password</label>
-                        <input type="password" class="form-control" name="oldpass" id="oldpass" placeholder="Enter Old Password">
+                        <input type="password" class="form-control" name="oldpass" id="oldpass" placeholder="Enter Old Password" onblur="checkpassword()">
                     </div>
                     <div class="form-group">
                         <label for="newpass">New Password</label>
-                        <input type="password" class="form-control" name="newpass" id="newpass" placeholder="Enter New Password">
+                        <input type="password" class="form-control" name="newpass" id="newpass" placeholder="Enter New Password" onblur="checknewpassword()">
                     </div>
                     <div class="form-group">
                         <label for="confpass">Confirm New Password</label>
-                        <input type="password" class="form-control" name="confpass" id="confpass" placeholder="Confirm Password">
+                        <input type="password" class="form-control" name="confpass" id="confpass" placeholder="Confirm Password" onblur="confirmpassword()">
                     </div>
                 </div>
             </div>
@@ -96,6 +105,9 @@
         {% endif %}
     </div>
 </form>
+{% if msg %}
+{% endif %}
+<div id="test"></div>
 {% endblock %}
 
 {% block js %}
@@ -109,6 +121,132 @@
             reader.readAsDataURL(input.files[0]);
             // console.log(input.files[0].mozFullPath);
         }
+    }
+    
+    function checkfname()
+    {
+        var regex=/^[a-zA-Z]+$/
+        var fname=document.getElementById('fname').value;
+        if(fname!="")
+        {
+            if(!regex.test(fname))
+            {
+                document.getElementById('fname').style.border="thin solid red";
+                document.getElementById('fname').value="";
+            }
+        }
+        document.body.focus();
+    }
+    function checklname()
+    {
+        var regex=/^[a-zA-Z]+$/
+        var lname=document.getElementById('lname').value;
+        if(lname!="")
+        {
+            if(!regex.test(lname))
+            {
+                document.getElementById('lname').style.border="thin solid red";
+                document.getElementById('lname').value="";
+            }
+        }
+        document.body.focus();
+    }
+    function checkuname()
+    {
+        var regex=/^[a-zA-Z0-9]+$/
+        var uname=document.getElementById('uname').value;
+        if(uname!="")
+        {
+            if(!regex.test(uname))
+            {
+                document.getElementById('uname').style.border="thin solid red";
+                document.getElementById('uname').value="";
+            }
+        }
+        document.body.focus();
+    }
+    function checkmobile()
+    {
+        var regex=/^[6-9][0-9]{9}$/
+        var mob=document.getElementById('mobile').value;
+        document.getElementById('mobile').style.border="none";
+        if(mob!="")
+        {
+            document.getElementById('mobile').style.border="0px";
+            if(!regex.test(mob))
+            {
+                document.getElementById('mobile').style.border="thin solid red";
+                document.getElementById('mobile').value="";
+            }
+            else
+            document.getElementById('mobile').style.border="0px";
+        }
+        document.body.focus();
+    }
+    function checkemail()
+    {
+        var regex=/^[A-Z0-9._%+-]+@([A-Z0-9-]+\.)+[A-Z]{2,4}$/i ;
+        var mail=document.getElementById('email').value;
+        if(mail!="")
+        {
+            if(!regex.test(mail))
+            {
+                document.getElementById('email').style.border="thin solid red";
+                document.getElementById('email').value="";
+            }
+        }
+        document.body.focus();
+    }
+    function checkpassword()
+    {
+        var regex=/^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#\$%\^&\*]).{8,}$/i ;
+        var pass=document.getElementById('oldpass').value;
+        if(pass!="")
+        {
+            if(!regex.test(pass))
+            {
+                document.getElementById('oldpass').style.border="thin solid red";
+                document.getElementById('oldpass').value="";
+            }
+        }
+        document.body.focus();
+    }
+    function checknewpassword()
+    {
+        var regex=/^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#\$%\^&\*]).{8,}$/i ;
+        var pass=document.getElementById('newpass').value;
+        if(pass!="")
+        {
+            if(!regex.test(pass))
+            {
+                document.getElementById('newpass').style.border="thin solid red";
+                document.getElementById('newpass').value="";
+            }
+        }
+        document.body.focus();
+    }
+    function confirmpassword()
+    {
+        var pass=document.getElementById('newpass').value;
+        var cpass=document.getElementById('confpass').value;
+        if(cpass!="")
+        {
+            if(pass != cpass)
+            {
+                document.getElementById('confpass').style.border="thin solid red";
+                document.getElementById('confpass').value="";
+                alert("Password Did Not Match!");
+            }
+        }
+        document.body.focus();
+    }
+    function validateform()
+    {
+        checkfname();
+        checklname();
+        checkemail();
+        checkmobile();
+        checkuname();
     }
 </script>
 {% endblock %}

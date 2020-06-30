@@ -11,6 +11,20 @@
 {% endblock %}
 
 {% block body %}
+{% if logged_in %}
+{% if logged_in_detail['admin']=='False' %}
+<div class="row row-col-6" style="margin: 75px 50px; background-color: rgba(65, 146, 179, 0.1);">
+    <div class="card mx-auto d-block">
+        <div class="card-body text-center" style="padding: 50px; margin: 50px;">
+            <h3>Accessible to the Admin Only.!</h3><br>
+            <form method="POST" class="text-center">
+                <a href="/logout"><button type="button" class="btn btn-danger col-sm-6 text-center rounded-pill">Login as Admin</button></a><br><br>
+                <a href="/dashboard"><button type="button" class="btn btn-danger col-sm-6 text-center rounded-pill">Back to Dashboard</button></a>
+            </form>
+        </div>
+    </div>
+</div>
+{% else %}
 <div class="row row-col-6" style="margin: 75px 50px; background-color: rgba(65, 146, 179, 0.1);">
     <div class="col">
         <div class="card">
@@ -22,11 +36,11 @@
                         <input type="text" class="form-control" name="prodid" id="prodid" aria-describedby="productID" value="{% if pdata %}{{ pdata['_id'] }}{% endif %}" disabled>
                     </div>
                     <div class="form-group">
-                        <label for="name">Status :</label><br>
+                        <label for="name">Product Name :</label><br>
                         <input type="text" class="form-control" name="name" id="name" aria-describedby="nameID" value="{% if pdata %}{{ pdata['name'] }}{% endif %}">
                     </div>
                     <div class="form-group">
-                        <label for="price">Usage :</label><br>
+                        <label for="price">Price :</label><br>
                         <input type="text" class="form-control" name="price" id="price" aria-describedby="priceID" value="{% if pdata %}{{ pdata['price'] }}{% endif %}">
                     </div>
                     <div class="form-group">
@@ -48,4 +62,17 @@
         </div>
     </div>
 </div>
+{% endif %}
+{% else %}
+<div class="row row-col-6" style="margin: 75px 50px; background-color: rgba(65, 146, 179, 0.1);">
+    <div class="card mx-auto d-block">
+        <div class="card-body text-center" style="padding: 50px; margin: 50px;">
+            <h3>Accessible to the Admin Only.!</h3><br>
+            <form method="POST" class="text-center">
+                <a href="/login"><button type="button" class="btn btn-danger col-sm-6 text-center rounded-pill">Login Now</button></a>
+            </form>
+        </div>
+    </div>
+</div>
+{% endif %}
 {% endblock %}

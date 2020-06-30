@@ -13,6 +13,12 @@
     .padding-5{
         padding: 5px;
     }
+    .padding-left-10{
+        padding-left: 10px;
+    }
+    .padding-right-5{
+        padding-right: 5px;
+    }
     .border-1{
         border: 1px solid;
     }
@@ -34,6 +40,15 @@
     .margin-top-bottom-50{
         margin: 50px auto;
     }
+    .margin-10{
+        margin: 10px;
+    }
+    .bold{
+        font-weight: bold;
+    }
+    .float-right{
+        float: right;
+    }
     .delete{
         display: block;
         color: #000;
@@ -51,6 +66,7 @@
 {% endblock %}
 
 {% block body %}
+{% if logged_in %}
 <br><br><br><br>
 {% if message != None and message != '\n' %}
 <div class="row" style="margin: 70px 70px -30px;">
@@ -59,99 +75,230 @@
     </div>
 </div>
 {% endif %}
-<div class="card padding-50" style="margin :auto 300px">
-    <div class="row-col">
-        <div class="row">
-            <div class="col bg-dark text-light" style="text-align: center; font-size: x-large;">Invoice</div>
-        </div>
-        <div class="row margin-top-bottom-50">
-            <div class="col">
-                Company Name<br>
-                Comapny Address Line 1<br>
-                Company Address Line 2
+<form method="post">
+    <div class="card padding-50" style="margin :auto 300px">
+        <div class="row-col">
+            <div class="row">
+                <div class="col bg-dark text-light" style="text-align: center; font-size: x-large;">Invoice</div>
             </div>
-            <div class="col"></div>
-            <div class="col">
-                <img src="a.jpg" class="border-1" style="float: right;" alt="Company Logo">
+            <div class="row margin-top-bottom-50">
+                <div class="col">
+                    Company Name<br>
+                    Comapny Address Line 1<br>
+                    Company Address Line 2
+                </div>
+                <div class="col"></div>
+                <div class="col">
+                    <img src="abc.jpg" class="border-1" style="float: right;" alt="Company Logo">
+                </div>
             </div>
-        </div>
-        <hr width="70%">
-        <div class="row margin-top-bottom-50">
-            <div class="col">
-                <div class="form-group">
-                    <table style="padding: 5px;">
+            <hr width="70%">
+            <div class="row margin-top-bottom-50">
+                <div class="col">
+                    <div class="form-group">
+                        <table style="padding: 5px;">
+                            <tr>
+                                <td><label for="cname">Customer Name : </label></td>
+                                <td><input type="text" name="cname" id="cname" style="width: fit-content;" onblur="checkname()"></td>
+                                <script type='text/javascript'>
+                                    function checkname()
+                                    {
+                                        n=document.getElementById('cname').value;
+                                        if(n==null || n=='')
+                                        {
+                                            alert("Enter Customer Name!");
+                                            document.getElementById('cname').focus();
+                                        }
+                                    }
+                                </script>
+                            </tr>
+                            <tr>
+                                <td><label for="mob">Customer Mobile : </label></td>
+                                <td><input type="text" name="mob" id="mob" style="width: fit-content;"></td>
+                            </tr>
+                            <tr>
+                                <td><label for="cartid">Assigned Cart ID : </label></td>
+                                <td class="padding-5 padding-left-10">{% if cid %}{{ cid }}{% endif %}</td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+                <div class="col"></div>
+                <div class="col">
+                    <div class="form-group">
+                        <table style="float: right; padding: 5px; text-align: right; width: 110%;">
+                            <tr class="border-bottom-2" style="height: 40px;">
+                                <td><label for="billid">Bill ID : </label></td>
+                                <td class="border-left-2" >{% if billid %}{{ billid }}{% endif %}</td>
+                            </tr>
+                            <tr class="border-bottom-2" style="height: 40px;">
+                                <td><label for="assignid">Assignment ID : </label></td>
+                                <td class="border-left-2">{% if assignid %}{{ assignid }}{% endif %}</td>
+                            </tr>
+                            <tr style="height: 40px;">
+                                <td><label for="date">Date : </label></td>
+                                <td class="border-left-2">{% if date %}{{ date }}{% endif %}</td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <div class="row margin-top-bottom-20">
+                <div class="col">
+                    <table style="width: 100%;">
+                        <tr class="border-top-2 border-bottom-2">
+                            <th>Product ID</th>
+                            <th>Product Name</th>
+                            <th>Price</th>
+                            <th class="border-left-2 border-right-2">Quantity</th>
+                            <th>Amount</th>
+                        </tr>
+                        {% for i in cc.find({"assign_id":assignid}) %}
                         <tr>
-                            <td><label for="cname">Customer Name : </label></td>
-                            <td><input type="text" name="cname" id="cname" style="width: fit-content;"></td>
+                            <td name="piddata" class="padding-5"><a class="delete" href="#">X</a>{{ i['product_id'] }}</td>
+                            <td name="pnamedata" class="padding-5">{{ prd.find_one({"_id":i['product_id']})['name'] }}</td>
+                            <td name="ppricedata" class="padding-5">{{ prd.find_one({"_id":i['product_id']})['price'] }}</td>
+                            <td name="pqtydata" class="padding-5 padding-left-10 border-left-2 border-right-2">{{ i['quantity'] }}</td>
+                            <td name="pamt" class="padding-5 padding-left-10"></td>
+                            <script>
+                                var i=(document.getElementsByName('piddata').length-1);
+                                var p=document.getElementsByName('ppricedata')[i].innerHTML;
+                                var q=document.getElementsByName('pqtydata')[i].innerHTML;
+                                document.getElementsByName('pamt')[i].innerHTML=p*q;
+                            </script>
+                        </tr>
+                        {% endfor %}
+                        <tr>
+                            <td> &nbsp; </td>
+                            <td> &nbsp; </td>
+                            <td> &nbsp; </td>
+                            <td class="padding-5 border-left-2 border-right-2"> &nbsp; </td>
+                            <td> &nbsp; </td>
+                        </tr>
+                        <tr class="border-top-2 border-bottom-2">
+                            <td></td>
+                            <td></td>
+                            <td class="bold">Total Quantity</td>
+                            <td class="border-left-2 border-right-2" style="font-weight: bold; width: 18%"><input type="text" id="tqty" name="tqty" style="border: 0; margin: 5px; margin-left: 0px; width: 80%; height: fit-content; background-color: transparent;" disabled></td>
+                            <td class="padding-left-10 name="tamt" id="tamt" style="width: 15%; font-weight: bold;"></td>
                         </tr>
                         <tr>
-                            <td><label for="mob">Customer Mobile : </label></td>
-                            <td><input type="text" name="mob" id="mob" style="width: fit-content;"></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td class="border-left-2 border-right-2 border-bottom-2 bold padding-left-10">CGST (12%)</td>
+                            <td class="border-bottom-2 padding-5 padding-left-10" name="cgst" id="cgst"></td>
                         </tr>
                         <tr>
-                            <td><label for="cartid">Assigned Cart ID : </label></td>
-                            <td><input type="text" style="width: 70%; background-color: transparent;" name="cartid" id="cartid" value="{% if cid %}{{ cid }}{% endif %}" disabled></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td class="border-left-2 border-right-2 border-bottom-2 bold padding-left-10">SGST (12%)</td>
+                            <td class="border-bottom-2 padding-5 padding-left-10" name="sgst" id="sgst"></td>
                         </tr>
+                        <tr>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td class="border-left-2 border-right-2 border-bottom-2 bold padding-left-10">Total Amount</td>
+                            <td class="border-bottom-2"><input type="text" name="totalamt" id="totalamt" style="border: 0; margin: 5px; margin-left: 0px; width: 80%; height: fit-content; background-color: transparent;" disabled></td>
+                        </tr>
+                        <script>
+                            var qarr=document.getElementsByName('pqtydata');
+                            var amtarr=document.getElementsByName('pamt');
+                            var sum=0, total=0, gst=0;
+                            for (let i = 0; i < qarr.length; i++) {
+                                sum = (Number(sum)+Number(qarr[i].innerHTML));
+                                total = (Number(total)+Number(amtarr[i].innerHTML));
+                                //alert("Qty : "+sum+"Amt : "+total);
+                            }
+                            gst=total*12/100;
+                            document.getElementById('tqty').value=sum.toString();
+                            document.getElementById('tamt').innerHTML=total.toString();
+                            document.getElementById('cgst').innerHTML=gst.toString();
+                            document.getElementById('sgst').innerHTML=gst.toString();
+                            total=total+(2*gst);
+                            document.getElementById('totalamt').value=total.toString();
+                        </script>
+                        <tr>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td class="border-left-2 border-right-2 border-bottom-2 bold padding-left-10">Amount Paid</td>
+                            <td class="border-bottom-2" style="padding: 5px 0;"><input type="text" name="amtpaid" id="amtpaid" onchange="checkamt()" onblur="paycomplete()" style="border: 0; margin: 0; width: 80%; height: fit-content;"></td>
+                        </tr>
+                        <tr>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td class="border-left-2 border-right-2 border-bottom-2 bold padding-left-10" name="due" id="due">Amount Due</td>
+                            <td class="border-bottom-2 padding-5 padding-left-10" name="amtdue" id="amtdue"></td>
+                        </tr>
+                        <script type="text/javascript">
+                            function checkamt()
+                            {
+                                var paid=document.getElementById('amtpaid').value;
+                                var t=document.getElementById('totalamt').value;
+                                var due=Number(t)-Number(paid);
+                                if(paid!=null && paid!="")
+                                {   if(due>=0)
+                                    {
+                                        document.getElementById('due').innerHTML='Amount Due';
+                                        document.getElementById('amtdue').innerHTML=due.toFixed(2);
+                                    }
+                                    else
+                                    {
+                                        document.getElementById('due').innerHTML='Amount Returned';
+                                        document.getElementById('amtdue').innerHTML=-due.toFixed(2);
+                                    }
+                                }
+                            }
+                            
+                            function paycomplete()
+                            {
+                                var regex=/^\d*(\.[0-9][0-9])?$/ ;
+                                var paid=document.getElementById('amtpaid').value;
+                                var t=document.getElementById('totalamt').innerHTML;
+                                if(paid!=null && paid!="")
+                                {
+                                    alert("Hello!\nRegex : "+regex);
+                                    if(Number(t)-Number(paid) != 0 && document.getElementById('due').innerHTML!='Amount Returned')
+                                    {   
+                                        alert("Pay the Total Amount!");
+                                        document.getElementById('amtpaid').value="";
+                                        document.getElementById('amtdue').innerHTML="";
+                                        document.getElementById('amtpaid').focus();
+                                    }
+                                    else
+                                        alert("Total Amount Received!");
+                                }
+                            }
+                        </script>
                     </table>
                 </div>
             </div>
-            <div class="col"></div>
-            <div class="col">
-                <div class="form-group">
-                    <table style="float: right; padding: 5px; text-align: right;">
-                        <tr>
-                            <td><label for="billid">Bill ID : </label></td>
-                            <td><input type="text" style="width: 40%; background-color: transparent;" name="billid" id="billid" value="{% if billid %}{{ billid }}{% endif %}" disabled></td>
-                        </tr>
-                        <tr>
-                            <td><label for="assignid">Assignment ID : </label></td>
-                            <td><input type="text" style="width: 40%; background-color: transparent;" name="assignid" id="assignid" value="{% if assignid %}{{ assignid }}{% endif %}" disabled></td>
-                        </tr>
-                        <tr>
-                            <td><label for="date">Date : </label></td>
-                            <td><input type="date" style="width: fit-content; background-color: transparent; border:0px; margin: auto 10px;" name="date" id="date" value="{% if date %}{{ date }}{% endif %}" disabled></td>
-                        </tr>
-                    </table>
+            <hr width="70%">
+            <div class="row">
+                <div class="col margin-top-bottom-50" style="text-align: center;">TERMS
+                    <div style="text-align: center; font-size: small;">The Products Won't Be Returned Once Bought.</div>
                 </div>
             </div>
+            <button name="save" id="save" class="btn btn-danger float-right" btn-lg btn-block">Save Bill</button>
         </div>
-        <div class="row margin-top-bottom-20">
-            <div class="col">
-                <table style="width: 100%;">
-                    <tr class="border-top-2 border-bottom-2">
-                        <th>Product ID</th>
-                        <th>Product Name</th>
-                        <th>Price</th>
-                        <th class="border-left-2 border-right-2">Quantity</th>
-                        <th>Amount</th>
-                    </tr>
-                    {% for i in cc.find({"assign_id":assignid}) %}
-                    <tr>
-                        <td class="padding-5"><a class="delete" href="#">X</a>{{ i['product_id'] }}</td>
-                        <td class="padding-5">{{ prd.find_one({"_id":i['product_id']})['name'] }}</td>
-                        <td class="padding-5">{{ prd.find_one({"_id":i['product_id']})['price'] }}</td>
-                        <td class="padding-5 border-left-2 border-right-2">{{ i['quantity'] }}</td>
-                        <td class="padding-5"></td>
-                    </tr>
-                    {% endfor %}
-                    <tr class="border-top-2 border-bottom-2">
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td class="border-left-2 border-right-2">total quantity</td>
-                        <td>total amount</td>
-                    </tr>
-                </table>
-            </div>
-        </div>
-        <hr width="70%">
-        <div class="row">
-            <div class="col margin-top-bottom-50" style="text-align: center;">TERMS
-                <div style="text-align: center; font-size: small;">The Products Won't Be Returned Once Bought.</div>
-            </div>
+    </div>
+</form>
+{% else %}
+<div class="row row-col-6" style="margin: 75px 50px; background-color: rgba(65, 146, 179, 0.1);">
+    <div class="card mx-auto d-block">
+        <div class="card-body text-center" style="padding: 50px; margin: 50px;">
+            <h3>First Log In to view contents of this page.!</h3><br>
+            <form method="POST" class="text-center">
+                <a href="/login"><button type="button" class="btn btn-danger col-sm-6 text-center rounded-pill">Login Now</button></a>
+            </form>
         </div>
     </div>
 </div>
+{% endif %}
 {% endblock %}
 
 {% block js %}

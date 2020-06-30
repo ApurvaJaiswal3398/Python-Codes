@@ -1,0 +1,176 @@
+{% extends 'layout.html' %}
+
+{% block css %}
+<style>
+    .main{
+        margin: 10px;
+        margin-top: 50px;
+    }
+    
+    .sub-main{
+        margin:20px;
+        padding: 20px;
+    }
+    
+    .bgtransparent{
+        background-color: transparent;
+    }
+    
+    .border0{
+        border: 0px;
+    }
+</style>
+{% endblock %}
+
+{% block body %}
+{% if logged_in %}
+{% if logged_in_detail['admin']=='False' %}
+<div class="row row-col-6" style="margin: 75px 50px; background-color: rgba(65, 146, 179, 0.1);">
+    <div class="card mx-auto d-block">
+        <div class="card-body text-center" style="padding: 50px; margin: 50px;">
+            <h3>Accessible to the Admin Only.!</h3><br>
+            <form method="POST" class="text-center">
+                <a href="/logout"><button type="button" class="btn btn-danger col-sm-6 text-center rounded-pill">Login as Admin</button></a><br><br>
+                <a href="/dashboard"><button type="button" class="btn btn-danger col-sm-6 text-center rounded-pill">Back to Dashboard</button></a>
+            </form>
+        </div>
+    </div>
+</div>
+{% else %}
+<form method="POST">
+    <div class="container-fluid main">
+        {% if message != None %}
+        <div class="row" style="margin: 70px 70px -30px;">
+            <div class="col-sm-12 alert alert-{{ type }}" role="alert">
+                {{ message }}
+            </div>
+        </div>
+        {% endif %}
+        <div class="row row-col-6" style="margin: 75px 50px; background-color: rgba(65, 146, 179, 0.1);">
+            <div class="col card mx-auto d-block bgtransparent border0">
+                <div class="sub-main">
+                    <table class="table table-hover table-inverse table-responsive">
+                        <h4>Carts' Details</h4>
+                        <thead class="thead-inverse">
+                            <tr>
+                                <th>ID</th>
+                                <th>Status</th>
+                                <th>Use</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for i in crtcrsr.find().sort("_id") %}
+                            <tr>
+                                <td scope="row" name="cartid">{{ i["_id"] }}</td>
+                                <td>{{ i["status"] }}</td>
+                                <td>{{ i["use"] }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                <div class="sub-main">
+                    <div class="form-group">
+                        <label for="cid">Enter Cart Id to Delete Data</label>
+                        <input type="text" class="form-control" name="cid" id="cid" onblur="checkcartid()" placeholder="Cart Id">
+                        <small id="usernameId" class="form-text text-muted">Take help from the table above</small>
+                        <button type="button" name="modify" id="modify" class="btn btn-outline-primary" onclick="reveal()">Proceed to Delete</button>
+                    </div>
+                </div>
+            </div>
+            <div class="col card mx-auto d-block bgtransparent border0">
+                <div class="card" style="background-color: transparent; border: none;">
+                    <a href="/dashboard"><button type="button" class="btn btn-outline-primary" style="margin: 10px; float: right;">Back to Dashboard</button></a>
+                </div>
+                <div class="card" style="background-color: transparent; border: none;">
+                    <div id="revealy" style="margin: 20px; display: none;">
+                        <h5>Do Tou Want To Delete Details of Cart Id</h5>
+                        <h3 id="getidy"></h3><br>
+                        <a name="deleteyes" id="deleteyes" href="#" role="button"><button class="btn btn-success">YES</button></a>
+                        <a name="deleteno" id="deleteno" class="btn btn-danger" href="/delete_cart" role="button">NO</a>
+                    </div>
+                    <div id="revealn" style="margin: 20px; display: none;">
+                        <h5>No Record Found for Cart Id</h5>
+                        <h3 id="getidn"> ?</h3>
+                        <h5>Please Enter a Valid Cart Id to Delete the Details</h5>
+                        <a name="ok" id="ok" class="btn btn-danger" href="/delete_cart" role="button">OK</a>
+                        <!-- <a name="deleteyes" id="deleteyes" class="btn btn-success" href="#" role="button">YES</a>
+                        <a name="deleteno" id="deleteno" class="btn btn-danger" href="#" role="button">NO</a> -->
+                    </div>
+                    <!-- <a href="/dashboard"><button type="button" class="btn btn-outline-primary" style="margin: 10px; float: right;">Back to Dashboard</button></a> -->
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+{% endif %}
+{% else %}
+<div class="row row-col-6" style="margin: 75px 50px; background-color: rgba(65, 146, 179, 0.1);">
+    <div class="col card mx-auto d-block">
+        <div class="card-body text-center" style="padding: 50px; margin: 50px;">
+            <h3>First Log In to view contents of this page.!</h3><br>
+            <form class="text-center">
+                <a href="/login"><button type="button" class="btn btn-danger col-sm-6 text-center rounded-pill">Login Now</button></a>
+            </form>
+        </div>
+    </div>
+</div>
+{% endif %}
+{% endblock %}
+
+{% block js %}
+<script type="text/javascript">
+    function checkcartid()
+    {
+        var regex=/^\d+$/ ;
+        var cid=document.getElementById('cid').value;
+        if(cid!="")
+        {
+            if(!regex.test(cid))
+            {
+                alert("Enter a Valid Cart ID!");
+                document.getElementById('cid').style.border="thin solid red";
+                document.getElementById('cid').value="";
+                document.getElementById('cid').focus();
+            }
+            else
+            {
+                document.getElementById('cid').style.border="0px";
+            }
+        }
+        document.body.focus();
+    }
+    function reveal()
+    {
+        var cid=document.getElementById('cid').value;
+        var i=0;
+        alert("Cart ID : "+cid);
+        if(cid!="" && cid!=null)
+        {
+            alert("Cart Id not empty");
+            var carr=document.getElementsByName('cartid');
+            alert("Fetched Cart ID Array of length "+carr.length);
+            for (i = 0; i < carr.length; i++)
+            {
+                alert("Checking "+cid+" with "+carr[i].innerHTML);
+                if(carr[i].innerHTML==cid)
+                {
+                    alert("Match Found of\n"+carr[i].innerHTML+"\n&\n"+cid);
+                    var t=document.getElementById("getidy");
+                    t.innerHTML = t.innerHTML + cid;
+                    document.getElementById("revealy").style.display="block";
+                    break;
+                }
+            }
+            alert("Checked for the Equality\ni = "+i);
+            if(i==carr.length)
+            {
+                alert("No Such Cart ID found!\nEnter a Valid Cart ID");
+                var t=document.getElementById("getidn");
+                t.innerHTML = t.innerHTML + cid;
+                    document.getElementById("revealn").style.display="block";
+            }
+        }
+    }
+</script>
+{% endblock %}

@@ -1,0 +1,198 @@
+{% extends 'layout.html' %}
+
+{% block css %}
+<style>
+    .main{
+        margin: 10px;
+        margin-top: 50px;
+    }
+    
+    .sub-main{
+        margin:20px;
+        padding: 20px;
+    }
+    
+    .bgtransparent{
+        background-color: transparent;
+    }
+    
+    .border0{
+        border: 0px;
+    }
+
+    .heightmaxcontent{
+        height: max-content;
+    }
+    .heightem{
+        height: 12.5em;
+    }
+
+    .pad10{
+        padding: 10px;
+        text-align: center;
+    }
+
+    .valignmid{
+        vertical-align: middle;
+    }
+</style>
+{% endblock %}
+
+{% block body %}
+{% if logged_in %}
+{% if logged_in_detail['admin']=='False' %}
+<div class="row row-col-6" style="margin: 75px 50px; background-color: rgba(65, 146, 179, 0.1);">
+    <div class="card mx-auto d-block">
+        <div class="card-body text-center" style="padding: 50px; margin: 50px;">
+            <h3>Accessible to the Admin Only.!</h3><br>
+            <form method="POST" class="text-center">
+                <a href="/logout"><button type="button" class="btn btn-danger col-sm-6 text-center rounded-pill">Login as Admin</button></a><br><br>
+                <a href="/dashboard"><button type="button" class="btn btn-danger col-sm-6 text-center rounded-pill">Back to Dashboard</button></a>
+            </form>
+        </div>
+    </div>
+</div>
+{% else %}
+<form method="POST">
+    <div class="container-fluid main">
+        {% if message != None %}
+        <div class="row" style="margin: 70px 70px -30px;">
+            <div class="col-sm-12 alert alert-{{ type }}" role="alert">
+                {{ message }}
+            </div>
+        </div>
+        {% endif %}
+        <div class="row row-col-6" style="margin: 75px 50px; background-color: rgba(65, 146, 179, 0.1);">
+            <div class="col card mx-auto d-block bgtransparent border0">
+                <div class="sub-main" style="overflow-y: scroll; height: 64.5vh;">
+                    <table cellspacing=0>
+                        {% for i in usrcrsr.find().sort("username") %}
+                        <tr>
+                            <td style="margin-right: 0;">
+                                <div class="card pad10 heightem" style="border: thin solid blue; border-right: 0; border-radius: 10% 0% 0% 10%; margin-right: 0;">
+                                    <img src="{{ i['image_file'] }}" alt="Image of {{ i['first_name'] }}" class="rounded-circle" width=120px><br>
+                                    {% if i['admin'] == 'True' %}
+                                    <div class="btn-outline-success" style="padding: 5%; height: 22%;"><h4>Admin</h4></div>
+                                    {% else %}
+                                    <div class="btn-outline-danger" style="padding: 5%; height: 22%;"><h4>User</h4></div>
+                                    {% endif %}
+                                </div>
+                            </td>
+                            <td style="margin-left: 0;">
+                                <div class="card pad10 heightem" style="border: thin solid blue; border-radius: 0% 10% 10% 0%; border-left: 0; margin-left: 0;">
+                                    <br><div>
+                                        <h3 name="userid">{{ i["username"] }}</h3>
+                                        <h5 class="text-muted">{{ i["first_name"] }} {{ i["last_name"] }}</h5>
+                                    </div><br>
+                                    <div style="bottom: 0px;">{{ i["email"] }}<br>{{ i["mobile"] }}</div>
+                                </div>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </table>
+                </div>
+                <div class="sub-main">
+                    <div class="form-group">
+                        <label for="uid">Enter User Name to Delete Data</label>
+                        <input type="text" class="form-control" name="uid" id="uid" onblur="checkusername()" placeholder="Enter Username">
+                        <small id="usernameId" class="form-text text-muted">Take help from the table above</small>
+                        <button type="button" name="modify" id="modify" class="btn btn-outline-primary" onclick="reveal()">Proceed to Delete</button>
+                    </div>
+                </div>
+            </div>
+            <div class="col card mx-auto d-block bgtransparent border0">
+                <div class="card" style="background-color: transparent; border: none;">
+                    <a href="/dashboard"><button type="button" class="btn btn-outline-primary" style="margin: 10px; float: right;">Back to Dashboard</button></a>
+                </div>
+                <div class="card" style="background-color: transparent; border: none;">
+                    <div id="revealy" style="margin: 20px; display: none;">
+                        <h5>Do Tou Want To Delete Details of User Name</h5>
+                        <h3 id="getidy"></h3><br>
+                        <a name="deleteyes" id="deleteyes" href="#" role="button"><button class="btn btn-success">YES</button></a>
+                        <a name="deleteno" id="deleteno" class="btn btn-danger" href="/delete_user" role="button">NO</a>
+                    </div>
+                    <div id="revealn" style="margin: 20px; display: none;">
+                        <h5>No Record Found for User Name</h5>
+                        <h3 id="getidn"></h3>
+                        <h5>Please Enter a Valid User Name to Delete the Details</h5>
+                        <a name="ok" id="ok" class="btn btn-danger" href="/delete_user" role="button">OK</a>
+                        <!-- <a name="deleteyes" id="deleteyes" class="btn btn-success" href="#" role="button">YES</a>
+                            <a name="deleteno" id="deleteno" class="btn btn-danger" href="#" role="button">NO</a> -->
+                        </div>
+                        <!-- <a href="/dashboard"><button type="button" class="btn btn-outline-primary" style="margin: 10px; float: right;">Back to Dashboard</button></a> -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+    {% endif %}
+    {% else %}
+    <div class="row row-col-6" style="margin: 75px 50px; background-color: rgba(65, 146, 179, 0.1);">
+        <div class="col card mx-auto d-block">
+            <div class="card-body text-center" style="padding: 50px; margin: 50px;">
+                <h3>First Log In to view contents of this page.!</h3><br>
+                <form class="text-center">
+                    <a href="/login"><button type="button" class="btn btn-danger col-sm-6 text-center rounded-pill">Login Now</button></a>
+                </form>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+    {% endblock %}
+    
+    {% block js %}
+    <script type="text/javascript">
+        function checkusername()
+        {
+            var regex=/^[a-zA-Z0-9]+$/ ;
+            var uid=document.getElementById('uid').value;
+            if(uid!="")
+            {
+                if(!regex.test(uid))
+                {
+                    alert("Enter a Valid User Name!");
+                    document.getElementById('uid').style.border="thin solid red";
+                    document.getElementById('uid').value="";
+                    document.getElementById('uid').focus();
+                }
+                else
+                {
+                    document.getElementById('uid').style.border="0px";
+                }
+            }
+            document.body.focus();
+        }
+        function reveal()
+        {
+            var uid=document.getElementById('uid').value;
+            var i=0;
+            alert("User Name : "+uid);
+            if(uid!="" && uid!=null)
+            {
+                alert("User Name not empty");
+                var uarr=document.getElementsByName('userid');
+                alert("Fetched User Name Array of length "+uarr.length);
+                for (i = 0; i < uarr.length; i++)
+                {
+                    alert("Checking "+uid+" with "+uarr[i].innerHTML);
+                    if(uarr[i].innerHTML==uid)
+                    {
+                        alert("Match Found of\n"+uarr[i].innerHTML+"\n&\n"+uid);
+                        var t=document.getElementById("getidy");
+                        t.innerHTML = t.innerHTML + uid + " ?";
+                        document.getElementById("revealy").style.display="block";
+                        break;
+                    }
+                }
+                alert("Checked for the Equality\ni = "+i);
+                if(i==uarr.length)
+                {
+                    alert("No Such User Name found!\nEnter a Valid User Name");
+                    var t=document.getElementById("getidn");
+                    t.innerHTML = t.innerHTML + uid;
+                    document.getElementById("revealn").style.display="block";
+                }
+            }
+        }
+    </script>
+    {% endblock %}

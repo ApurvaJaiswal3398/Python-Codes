@@ -13,23 +13,24 @@
     }
 </style>
 {% endblock %}
-
+{% block title %}View Cart Details By Date{% endblock %}
 {% block body %}
 {% if logged_in %}
 <div class="container-fluid main">
+    <div class="card" style="background-color: transparent; border: none; margin: 70px 70px -30px;">
+        <a href="/dashboard"><button type="button" class="btn btn-outline-primary" style="margin: 10px; float: right;">Back to Dashboard</button></a>
+    </div>
     {% if message != None %}
-    <div class="row" style="margin: 70px 70px -30px;">
+    <div class="row" style="margin: 50px 70px -30px;">
         <div class="col-sm-12 alert alert-danger" role="alert">
             {{ message }}
         </div>
     </div>
     {% endif %}
-    <div class="card" style="background-color: transparent; border: none;">
-        <a href="/dashboard"><button type="button" class="btn btn-outline-primary" style="margin: 10px; float: right;">Back to Dashboard</button></a>
-    </div>
-    <div class="sub-main mx-auto" style="width: 90%; border: thin solid black;">
+    <div class="sub-main mx-auto" style="width: 90%;">
         <center>
-            <table class="table table-hover table-inverse table-responsive" style="border: thin solid royalblue; height: 500px;">
+            <table class="table table-hover table-inverse table-responsive" style="height: 500px;">
+                <h3 style="float: left;">Customers' Carts Details</h3>
                 <thead class="thead-inverse">
                     <tr>
                         <th>ID</th>
@@ -60,10 +61,10 @@
     <div class="sub-main mx-auto" style="width: 90%;">
         <form method="POST">
             <div class="form-group">
-                <label for="ccid">Enter Cart Assignment Id to View Bill</label>
-                <input type="text" class="form-control" name="ccid" id="ccid" align="right" aria-describedby="cartID" placeholder="Cart Id">
-                <small id="usernameId" class="form-text text-muted">Take help from the table above</small>
-                <button type="submit" name="modify" id="modify" class="btn btn-outline-primary" btn-lg btn-block">Proceed to View Bill</button>
+                <label for="udate">Select Date to View the Cart Details</label>
+                <input type="date" class="form-control" style="width: 180px;" name="udate" id="udate" align="right" aria-describedby="udateID" placeholder="Cart Id" value="{{ udate }}">
+                <small id="udateID" class="form-text text-muted">Take help from the table above</small>
+                <button type="submit" name="modify" id="modify" class="btn btn-outline-primary" btn-lg btn-block">Proceed</button>
             </div>
         </form>
     </div>

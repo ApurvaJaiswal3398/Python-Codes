@@ -10,9 +10,12 @@
 </style>
 {% endblock %}
 
+{% if logged_in %}
 {% block bodyevent %}onload="setdate()"{% endblock %}
+{% endif %}
 
 {% block body %}
+{% if logged_in %}
 {% if message != None and message != '\n' %}
 <div class="row" style="margin: 70px 70px -30px;">
     <div class="col-sm-12 alert alert-danger" role="alert">
@@ -54,16 +57,18 @@
                     <div class="form-group row-col-6">
                         <table style="border: 0px;">
                             <tr>
-                                <td><label for="pid">Select Product :</label>
+                                <td>
+                                    <label for="pid">Select Product :</label>
                                     <select class="form-control" name="pid" id="pid" onchange="selectproduct()" style="width: 200px;">
-                                    {% for i in cst.find() %}
-                                    <option>{{ i["_id"] }}</option>
-                                    {% endfor %}
-                                </select></td>
-                                <td>&nbsp; &nbsp; &nbsp; </td>
+                                        {% for i in cst.find() %}
+                                        <option>{{ i["_id"] }}</option>
+                                        {% endfor %}
+                                    </select>
+                                </td>
+                                <!-- <td>&nbsp; &nbsp; &nbsp; </td>
                                 <td><label for="price">Price :</label>
                                     <input type="text" class="form-control" name="price" id="price" style="width: fit-content; display: nne;" value="">
-                                </td>
+                                </td> -->
                             </tr>
                         </table>
                         <input type="text" class="form-control" name="prodid" id="prodid" style="width: fit-content; display: nne;" value="">
@@ -74,17 +79,17 @@
                         <input type="text" class="form-control" name="qty" id="qty" style="width: fit-content; display: nne;" value="1">
                     </div>
                     <div class="form-group">
-                        <label for="bill">Billing :</label>
+                        <label for="bill">Next Step :</label>
                         <div class="form-check form-check-inline">
                             <label class="form-check-label">
-                                <input class="form-check-input" type="radio" name="billing" id="billyes" value="True" onchange="selectbillingstatus()"> Done &nbsp; &nbsp;
-                                <input class="form-check-input" type="radio" name="billing" id="billno" value="False" onchange="selectbillingstatus()"> To Be Done
+                                <input class="form-check-input" type="radio" name="billing" id="billyes" value="True" onchange="selectbillingstatus()"> Proceed to Billing &nbsp; &nbsp;
+                                <input class="form-check-input" type="radio" name="billing" id="billno" value="False" onchange="selectbillingstatus()"> Add More Products
                             </label>
                         </div>
                         <input type="text" class="form-control" name="bill" id="bill" style="width: fit-content; display: nne;" value="">
                     </div>
-                    <button class="btn btn-danger" style="margin: 10px;">Add More Products</button>
-                    <button class="btn btn-danger" style="margin: 10px;" onclick="proceedtobilling()">Proceed to Billing</button><br>
+                    <!-- <button class="btn btn-danger" style="margin: 10px;">Add More Products</button> -->
+                    <button class="btn btn-danger" style="margin: 10px;" onclick="proceedtobilling()">Proceed to Next Step</button><br>
                     <input type="text" id="ptb" name="ptb" value="">
                 </form>
             </div>
@@ -96,6 +101,18 @@
         </div>
     </div>
 </div>
+{% else %}
+<div class="row row-col-6" style="margin: 75px 50px; background-color: rgba(65, 146, 179, 0.1);">
+    <div class="card mx-auto d-block">
+        <div class="card-body text-center" style="padding: 50px; margin: 50px;">
+            <h3>First Log In to view contents of this page.!</h3><br>
+            <form method="POST" class="text-center">
+                <a href="/login"><button type="button" class="btn btn-danger col-sm-6 text-center rounded-pill">Login Now</button></a>
+            </form>
+        </div>
+    </div>
+</div>
+{% endif %}
 {% endblock %}
 
 {% block js %}
@@ -179,8 +196,11 @@
     
     function proceedtobilling()
     {
-        alert("Proceeding to billing!")
-        document.getElementById('ptb').value="Proceed";
+        if(document.getElementById('billyes').checked===true)
+        {
+            alert("Proceeding to billing!");
+            document.getElementById('ptb').value="Proceed";
+        }
     }
 </script>
 {% endblock %}

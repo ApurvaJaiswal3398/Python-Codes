@@ -10,9 +10,23 @@
 </style>
 {% endblock %}
 
-{% block bodyevent %}onload="loaddata()"{% endblock %}
+{% if logged_in %}{% block bodyevent %}onload="loaddata()"{% endblock %}{% endif %}
 
 {% block body %}
+{% if logged_in %}
+{% if logged_in_detail['admin']=='False' %}
+<div class="row row-col-6" style="margin: 75px 50px; background-color: rgba(65, 146, 179, 0.1);">
+    <div class="card mx-auto d-block">
+        <div class="card-body text-center" style="padding: 50px; margin: 50px;">
+            <h3>Accessible to the Admin Only.!</h3><br>
+            <form method="POST" class="text-center">
+                <a href="/logout"><button type="button" class="btn btn-danger col-sm-6 text-center rounded-pill">Login as Admin</button></a><br><br>
+                <a href="/dashboard"><button type="button" class="btn btn-danger col-sm-6 text-center rounded-pill">Back to Dashboard</button></a>
+            </form>
+        </div>
+    </div>
+</div>
+{% else %}
 <div class="row row-col-6" style="margin: 75px 50px; background-color: rgba(65, 146, 179, 0.1);">
     <div class="col">
         <div class="card">
@@ -30,7 +44,7 @@
                             <label class="form-check-label">
                                 Change Activity Status : &nbsp; &nbsp; &nbsp;
                                 <input class="form-check-input" type="radio" name="status" id="status1" value="Cart Active" onchange="selectstatus()"> Active &nbsp; &nbsp;
-                                <input class="form-check-input" type="radio" name="status" id="status2" value="Cart Unactive" onchange="selectstatus()"> Inactive
+                                <input class="form-check-input" type="radio" name="status" id="status2" value="Cart Inactive" onchange="selectstatus()"> Inactive
                             </label>
                         </div>
                     </div><br>
@@ -56,6 +70,19 @@
         </div>
     </div>
 </div>
+{% endif %}
+{% else %}
+<div class="row row-col-6" style="margin: 75px 50px; background-color: rgba(65, 146, 179, 0.1);">
+    <div class="card mx-auto d-block">
+        <div class="card-body text-center" style="padding: 50px; margin: 50px;">
+            <h3>Accessible to the Admin Only.!</h3><br>
+            <form method="POST" class="text-center">
+                <a href="/login"><button type="button" class="btn btn-danger col-sm-6 text-center rounded-pill">Login Now</button></a>
+            </form>
+        </div>
+    </div>
+</div>
+{% endif %}
 {% endblock %}
 
 {% block js %}

@@ -13,6 +13,7 @@
 </style>
 {% endblock %}
 
+{% block spin_login %}<span class="spinner-grow spinner-grow-sm"></span>{% endblock %}
 
 {% block body %}
 <br><br>
@@ -28,15 +29,15 @@
         <div class="col">
             <div class="card">
                 <div class="card-body bg-info text-light single-card-tab rounded" style="padding: 50px 100px;">
-                    <form method="POST">
+                    <form method="POST" name="login" onsubmit="return passwordvalidate()">
                         <div class="h3 mb-3 font-weight-normal text-center">Login</div><hr>
                         <div class="form-group">
                             <label for="login_email">Email</label>
-                            <input type="email" class="form-control" name="login_email" id="login_email" aria-describedby="EmailId" placeholder="Enter Email">
+                            <input type="email" class="form-control" name="login_email" id="login_email" aria-describedby="EmailId" placeholder="Enter Email" onblur="checkemail()" required>
                         </div>
                         <div class="form-group">
                             <label for="login_password">Password</label>
-                            <input type="password" class="form-control" name="login_password" id="login_password" placeholder="Enter Password">
+                            <input type="password" class="form-control" name="login_password" id="login_password" placeholder="Enter Password" required><!--onblur="checkpassword()" -->
                         </div>
                         <button class="btn btn-danger col-sm-6 rounded-pill">Sign In</button>
                     </form>
@@ -47,7 +48,7 @@
             <div class="card">
                 <div class="card-body bg-light text-dark single-card-tab rounded" style="padding: 50px 100px;">
                     <form method="post" class="text-center">
-                        <div class="h3 mb-3 font-weight-normal text-center">Not Registered Yet? </div><hr>
+                        <div id="get" class="h3 mb-3 font-weight-normal text-center">Not Registered Yet? </div><hr>
                         <a href="/register"><button type="button" class="btn btn-success col-sm-6 text-center rounded-pill">Register Now</button></a>
                     </form>
                 </div>
@@ -55,4 +56,39 @@
         </div>
     </div>
 </div>
+<div id="test"></div>
+{% endblock %}
+
+{% block js %}
+<script type="text/javascript">
+    
+    function checkemail()
+    {
+        var regex=/^[A-Z0-9._%+-]+@([A-Z0-9-]+\.)+[A-Z]{2,4}$/i ;
+        var mail=document.getElementById('login_email').value;
+        if(mail!="")
+        {
+            if(!regex.test(mail))
+            {
+                document.getElementById('login_email').style.border="2px solid red";
+                document.getElementById('login_email').value="";
+            }
+        }
+        document.body.focus();
+    }
+    function checkpassword()
+    {
+        var regex=/^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#\$%\^&\*]).{8,}$/i ;
+        var pass=document.getElementById('login_password').value;
+        if(pass!="")
+        {
+            if(!regex.test(pass))
+            {
+                document.getElementById('login_password').style.border="2px solid red";
+                document.getElementById('login_password').value="";
+            }
+        }
+        document.body.focus();
+    }
+</script>
 {% endblock %}

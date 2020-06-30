@@ -1,0 +1,40 @@
+{% extends 'layout.html' %}
+
+{% block css %}{% endblock %}
+
+{% block title %}Cart Details For {{ today }}{% endblock %}
+
+{% block body %}
+{% if logged_in %}
+<br><br><br><br>
+<div class="container-fluid main mx-auto d-block" style="width: 80%;">
+    <div>
+        <a href="/dashboard"><button type="button" class="btn btn-outline-primary" style="margin: 10px; float: right;">Back to Dashboard</button></a>
+        <h3>Assigned Carts on {{ today }}</h3>
+    </div><br>
+    {% for i in assignlist %}
+    <div class="card" style="margin: 10px ;">
+        <div class="card-body" style="margin: 25px;">
+            <h4>Assign ID : {{ i }}</h4>
+            <h5>Cart : {{ cartlist[assignlist.index(i)] }}</h5>
+            <h6>Products :</h6>
+            <div style="margin: auto 25px;">
+                <pre atyle="font-size: big;">{% for j in cc.find() %}{% if j['assign_id']==i %}{% for k in products.find() %}{% if k['_id']==j['product_id'] %}>  {{ k['name'] }}<br> &Tab; X &Tab; {{ j['quantity'] }}<br>{% endif %}{% endfor %}{% endif %}{% endfor %}</pre>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% else %}
+<div class="row row-col-6" style="margin: 75px 50px; background-color: rgba(65, 146, 179, 0.1);">
+    <div class="card mx-auto d-block">
+        <div class="card-body text-center" style="padding: 50px; margin: 50px;">
+            <h3>First Log In to view contents of this page.!</h3><br>
+            <form method="POST" class="text-center">
+                <a href="/login"><button type="button" class="btn btn-danger col-sm-6 text-center rounded-pill">Login Now</button></a>
+            </form>
+        </div>
+    </div>
+</div>
+{% endif %}
+{% endblock %}

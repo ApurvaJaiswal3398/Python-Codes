@@ -1,8 +1,7 @@
 <!doctype html>
 <html lang="en">
 <head>
-    <title>My Project - {% block title %}{{ title }}{% endblock %}
-    </title>
+    <title>InelliCart - {% block title %}{{ title }}{% endblock %}</title>
     <!-- Required meta tags -->
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
@@ -13,7 +12,7 @@
 </head>
 <body style="background-color: #e8e9f7;" {% block bodyevent %}{% endblock %}>
     <nav class="navbar navbar-expand-lg fixed-top navbar-dark bg-info">
-        <a class="navbar-brand" href="/">Project</a>
+        <a class="navbar-brand btn-outline-info" href="/">Project</a>
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
         </button>
@@ -21,24 +20,24 @@
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
             <ul class="navbar-nav mr-auto">
                 <li class="nav-item">
-                    <a class="nav-link" href="/">Home</a>
+                    <a class="nav-link btn-outline-info" href="/">{% block spin_home %}{% endblock %}Home</a>
                 </li>
                 {% if logged_in %}
                 <li class="nav-item">
-                    <a class="nav-link" href="/dashboard" aria-label="dashboard">Dashboard</a>
+                    <a class="nav-link btn-outline-info" href="/dashboard" aria-label="dashboard">{% block spin_dashboard %}{% endblock %}Dashboard</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="/account" aria-label="register">Account</a>
+                    <a class="nav-link btn-outline-info" href="/account" aria-label="register">{% block spin_account %}{% endblock %}Account</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="/logout" aria-label="register">Log Out</a>
+                    <a class="nav-link btn-outline-info" href="/logout" aria-label="register">Log Out</a>
                 </li>
                 {% else %}
                 <li class="nav-item">
-                    <a class="nav-link" href="/login" aria-label="register">Log In</a>
+                    <a class="nav-link btn-outline-info" href="/login" aria-label="register">{% block spin_login %}{% endblock %}Log In</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="/register" aria-label="register">Register</a>
+                    <a class="nav-link btn-outline-info" href="/register" aria-label="register">{% block spin_register %}{% endblock %}Register</a>
                 </li>
                 {% endif %}
                 

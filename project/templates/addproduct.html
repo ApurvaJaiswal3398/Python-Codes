@@ -11,6 +11,20 @@
 {% endblock %}
 
 {% block body %}
+{% if logged_in %}
+{% if logged_in_detail['admin']=='False' %}
+<div class="row row-col-6" style="margin: 75px 50px; background-color: rgba(65, 146, 179, 0.1);">
+    <div class="card mx-auto d-block">
+        <div class="card-body text-center" style="padding: 50px; margin: 50px;">
+            <h3>Accessible to the Admin Only.!</h3><br>
+            <form method="POST" class="text-center">
+                <a href="/logout"><button type="button" class="btn btn-danger col-sm-6 text-center rounded-pill">Login as Admin</button></a><br><br>
+                <a href="/dashboard"><button type="button" class="btn btn-danger col-sm-6 text-center rounded-pill">Back to Dashboard</button></a>
+            </form>
+        </div>
+    </div>
+</div>
+{% else %}
 {% if message != None and message != '\n' %}
 <div class="row" style="margin: 70px 70px -30px;">
     <div class="col-sm-12 alert alert-danger" role="alert">
@@ -26,23 +40,23 @@
                     <h2 class="text-center">Product Details</h2><br>
                     <div class="form-group">
                         <label for="prodid">Product Id :</label>
-                        <input type="text" class="form-control" name="prodid" id="prodid" aria-describedby="productID" value="">
+                        <input type="text" class="form-control" name="prodid" id="prodid" aria-describedby="productID" value="{{ pid }}" disabled>
                     </div><br>
                     <div class="form-group">
                         <label for="prodname">Product Name :</label>
-                        <input type="text" class="form-control" name="prodname" id="prodname" aria-describedby="pnameID" value="">
+                        <input type="text" class="form-control" name="prodname" id="prodname" aria-describedby="pnameID" value="" required>
                     </div><br>
                     <div class="form-group">
                         <label for="price">Price :</label>
-                        <input type="text" class="form-control" name="price" id="price" aria-describedby="priceID" value="">
+                        <input type="text" class="form-control" name="price" id="price" aria-describedby="priceID" value="" required>
                     </div><br>
                     <div class="form-group">
                         <label for="barcode">Barcode :</label>
-                        <input type="text" class="form-control" name="barcode" id="barcode" aria-describedby="barcodeID" value="">
+                        <input type="text" class="form-control" name="barcode" id="barcode" aria-describedby="barcodeID" value="" required>
                     </div><br>
                     <div class="form-group">
                         <label for="category">Category :</label>
-                        <input type="text" class="form-control" name="category" id="category" aria-describedby="categoryID" value="">
+                        <input type="text" class="form-control" name="category" id="category" aria-describedby="categoryID" value="" required>
                     </div>
                     <button class="btn btn-danger" style="margin: 10px;">Save</button>
                 </form>
@@ -55,6 +69,19 @@
         </div>
     </div>
 </div>
+{% endif %}
+{% else %}
+<div class="row row-col-6" style="margin: 75px 50px; background-color: rgba(65, 146, 179, 0.1);">
+    <div class="card mx-auto d-block">
+        <div class="card-body text-center" style="padding: 50px; margin: 50px;">
+            <h3>Accessible to the Admin Only.!</h3><br>
+            <form method="POST" class="text-center">
+                <a href="/login"><button type="button" class="btn btn-danger col-sm-6 text-center rounded-pill">Login Now</button></a>
+            </form>
+        </div>
+    </div>
+</div>
+{% endif %}
 {% endblock %}
 
 {% block js %}
