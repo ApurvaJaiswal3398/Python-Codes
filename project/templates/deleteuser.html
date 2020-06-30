@@ -19,19 +19,19 @@
     .border0{
         border: 0px;
     }
-
+    
     .heightmaxcontent{
         height: max-content;
     }
     .heightem{
         height: 12.5em;
     }
-
+    
     .pad10{
         padding: 10px;
         text-align: center;
     }
-
+    
     .valignmid{
         vertical-align: middle;
     }
@@ -116,83 +116,80 @@
                         <h3 id="getidn"></h3>
                         <h5>Please Enter a Valid User Name to Delete the Details</h5>
                         <a name="ok" id="ok" class="btn btn-danger" href="/delete_user" role="button">OK</a>
-                        <!-- <a name="deleteyes" id="deleteyes" class="btn btn-success" href="#" role="button">YES</a>
-                            <a name="deleteno" id="deleteno" class="btn btn-danger" href="#" role="button">NO</a> -->
-                        </div>
-                        <!-- <a href="/dashboard"><button type="button" class="btn btn-outline-primary" style="margin: 10px; float: right;">Back to Dashboard</button></a> -->
                     </div>
                 </div>
             </div>
         </div>
-    </form>
-    {% endif %}
-    {% else %}
-    <div class="row row-col-6" style="margin: 75px 50px; background-color: rgba(65, 146, 179, 0.1);">
-        <div class="col card mx-auto d-block">
-            <div class="card-body text-center" style="padding: 50px; margin: 50px;">
-                <h3>First Log In to view contents of this page.!</h3><br>
-                <form class="text-center">
-                    <a href="/login"><button type="button" class="btn btn-danger col-sm-6 text-center rounded-pill">Login Now</button></a>
-                </form>
-            </div>
+    </div>
+</form>
+{% endif %}
+{% else %}
+<div class="row row-col-6" style="margin: 75px 50px; background-color: rgba(65, 146, 179, 0.1);">
+    <div class="col card mx-auto d-block">
+        <div class="card-body text-center" style="padding: 50px; margin: 50px;">
+            <h3>First Log In to view contents of this page.!</h3><br>
+            <form class="text-center">
+                <a href="/login"><button type="button" class="btn btn-danger col-sm-6 text-center rounded-pill">Login Now</button></a>
+            </form>
         </div>
     </div>
-    {% endif %}
-    {% endblock %}
-    
-    {% block js %}
-    <script type="text/javascript">
-        function checkusername()
+</div>
+{% endif %}
+{% endblock %}
+
+{% block js %}
+<script type="text/javascript">
+    function checkusername()
+    {
+        var regex=/^[a-zA-Z0-9]+$/ ;
+        var uid=document.getElementById('uid').value;
+        if(uid!="")
         {
-            var regex=/^[a-zA-Z0-9]+$/ ;
-            var uid=document.getElementById('uid').value;
-            if(uid!="")
+            if(!regex.test(uid))
             {
-                if(!regex.test(uid))
-                {
-                    alert("Enter a Valid User Name!");
-                    document.getElementById('uid').style.border="thin solid red";
-                    document.getElementById('uid').value="";
-                    document.getElementById('uid').focus();
-                }
-                else
-                {
-                    document.getElementById('uid').style.border="0px";
-                }
+                alert("Enter a Valid User Name!");
+                document.getElementById('uid').style.border="thin solid red";
+                document.getElementById('uid').value="";
+                document.getElementById('uid').focus();
             }
-            document.body.focus();
-        }
-        function reveal()
-        {
-            var uid=document.getElementById('uid').value;
-            var i=0;
-            alert("User Name : "+uid);
-            if(uid!="" && uid!=null)
+            else
             {
-                alert("User Name not empty");
-                var uarr=document.getElementsByName('userid');
-                alert("Fetched User Name Array of length "+uarr.length);
-                for (i = 0; i < uarr.length; i++)
-                {
-                    alert("Checking "+uid+" with "+uarr[i].innerHTML);
-                    if(uarr[i].innerHTML==uid)
-                    {
-                        alert("Match Found of\n"+uarr[i].innerHTML+"\n&\n"+uid);
-                        var t=document.getElementById("getidy");
-                        t.innerHTML = t.innerHTML + uid + " ?";
-                        document.getElementById("revealy").style.display="block";
-                        break;
-                    }
-                }
-                alert("Checked for the Equality\ni = "+i);
-                if(i==uarr.length)
-                {
-                    alert("No Such User Name found!\nEnter a Valid User Name");
-                    var t=document.getElementById("getidn");
-                    t.innerHTML = t.innerHTML + uid;
-                    document.getElementById("revealn").style.display="block";
-                }
+                document.getElementById('uid').style.border="0px";
             }
         }
-    </script>
-    {% endblock %}
+        document.body.focus();
+    }
+    function reveal()
+    {
+        var uid=document.getElementById('uid').value;
+        var i=0;
+        alert("User Name : "+uid);
+        if(uid!="" && uid!=null)
+        {
+            alert("User Name not empty");
+            var uarr=document.getElementsByName('userid');
+            alert("Fetched User Name Array of length "+uarr.length);
+            for (i = 0; i < uarr.length; i++)
+            {
+                alert("Checking "+uid+" with "+uarr[i].innerHTML);
+                if(uarr[i].innerHTML==uid)
+                {
+                    alert("Match Found of\n"+uarr[i].innerHTML+"\n&\n"+uid);
+                    var t=document.getElementById("getidy");
+                    t.innerHTML = t.innerHTML + uid + " ?";
+                    document.getElementById("revealy").style.display="block";
+                    break;
+                }
+            }
+            alert("Checked for the Equality\ni = "+i);
+            if(i==uarr.length)
+            {
+                alert("No Such User Name found!\nEnter a Valid User Name");
+                var t=document.getElementById("getidn");
+                t.innerHTML = t.innerHTML + uid;
+                document.getElementById("revealn").style.display="block";
+            }
+        }
+    }
+</script>
+{% endblock %}

@@ -73,6 +73,7 @@ def send_mail(mailid):
     con.quit()
     return True
 
+
 @app.route('/login', methods=['GET','POST'])
 def login():
     message=None
@@ -98,15 +99,7 @@ def login():
             print("Invalid Username")
             message = 'Invalid Email or Password!'
             logged_in = False
-        # else:
-        #     print("User could not be found")
-        # if check_data(login_email, login_password):
-        #     #crypt.check_password_hash(found["password"], login_password)
-        #     print("Login Successful")
-        # else:
-        #     print("Invalid Email or Password")
-        # else:
-        #     print("Enter Details to either Login or Register Yourself")
+        
     print(f"Logged In : {logged_in}")
     return render_template('login.html', title='Login', logged_in=logged_in, user=logged_in_detail, message=message)
 

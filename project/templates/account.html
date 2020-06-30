@@ -51,13 +51,11 @@
             <div class="card">
                 <div class="card-body" style="padding: 50px;">
                     <h2 class="text-center">Profile Photo</h2><br>
-                    <!-- <img src="/..{{ user['image_file'] }}" class="rounded-circle mx-auto d-block" style="height: 200px; width: 200px;"><br> -->
                     <img id="image" src="/..{{ user['image_file'] }}" alt="Profile Pic"  class="rounded-circle mx-auto d-block border" style="height: 200px; width: auto;"/>
                     <div class="form-group">
                         <label for="image_file">Choose Picture</label>
                         <input type="file" class="form-control-file btn-info" onchange="readURL(this);" name="image_file" id="image_file" accept="image/*" placeholder="Select A Picture" aria-describedby="imageID">
                         <small id="imageID" class="form-text text-muted">Select a square image or it may distort<br>current image : {{ user['image_file'] }}</small>
-                        <!-- <input type='file' class="form-control-file btn-info" onchange="readURL(this);" name="image_file" id="image_file" placeholder="Select A Picture"/> -->
                     </div>
                 </div>
             </div>
@@ -72,7 +70,6 @@
                         {% if umsg %}<small id="unameID" class="form-text text-muted">This Username is already taken. Enter Another Username.</small>{% endif %}
                     </div>
                 </div>
-                <!-- <button type="submit" class="btn btn-danger">Save</button> -->
             </div>
             <div class="card">
                 <div class="card-body" style="padding: 50px;">
@@ -112,8 +109,10 @@
 
 {% block js %}
 <script>
-    function readURL(input) {
-        if (input.files && input.files[0]) {
+    function readURL(input)
+    {
+        if (input.files && input.files[0])
+        {
             var reader = new FileReader();
             reader.onload = function(e) {
                 $("#image").attr("src", e.target.result);
