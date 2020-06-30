@@ -303,5 +303,29 @@
 
 {% block js %}
 <script>
+    $(function () {
+        let row = $('#producttbl tr.eval');
+        let cartQty = $("#producttbl tr.last-row td.cart-qty")
+        let cartTotal = $("#producttbl tr.last-row td.cart-total")
+
+        let totQty = 0
+        let totAmt = 0.0
+
+        $(row).each(function (index, element) {
+            var price = $(this).find('td.item-price').text()
+            var qty = $(this).find('td.item-qty').text()
+            if(price && qty){
+                $(this).find('td.item-price').text(parseFloat(price).toFixed(2))
+                price = parseInt(price)
+                qty = parseInt(qty)
+                total = price * qty
+                $(this).find('td.item-total').text(parseFloat(total).toFixed(2))
+                totQty+=qty
+                totAmt+=total
+                cartQty.text(totQty)
+                cartTotal.text(totAmt.toFixed(2))
+            }
+        });
+    });
 </script>
 {% endblock %}
