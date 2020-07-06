@@ -20,13 +20,6 @@
 {% block body %}
 <br><br>
 <div class="container-md">
-    {% if message %}
-    <div class="row" style="margin: 50px 70px -30px;">
-        <div class="col-sm-12 alert alert-danger" role="alert">
-            {{ message }}
-        </div>
-    </div>       
-    {% endif %}
     <div class="row  row-col-2" style="margin: 50px;">
         <div class="col">
             <div class="card">
@@ -34,15 +27,16 @@
                     <form method="POST" name="login" onsubmit="return passwordvalidate()">
                         <div class="h3 mb-3 font-weight-normal text-center">Login</div><hr>
                         <div class="form-group">
-                            <label for="receiver">Enter User Email</label>
-                            <input type="email" class="form-control" name="receiver" id="receiver" aria-describedby="EmailId" placeholder="Enter Email" onblur="checkemail()" required>
+                            <label for="otp">Enter OTP</label>
+                            <input type="text" class="form-control" name="otp" id="otp" placeholder="Enter OTP" onblur="checkemail()" required>
+                            <input type="text" class="form-control text-muted" name="verify" id="verify" value="{{ otp }}">
                         </div>
-                        <div class="form-group">
+                        <!-- <div class="form-group">
                             <label for="admin_pass">Enter Company Mail Password</label>
                             <input type="password" class="form-control" name="admin_pass" id="admin_pass" placeholder="Enter Password" onblur="checkpassword()" required>
                             <small id="pwdeID" class="form-text">To be Entered by the ADMIN ONLY!</small>
-                        </div>
-                        <button class="btn btn-danger col-sm-6 rounded-pill">Send OTP</button>
+                        </div> -->
+                        <button type="submit" class="btn btn-danger col-sm-6 rounded-pill">Verify</button>
                     </form>
                 </div>
             </div>
@@ -67,31 +61,40 @@
     
     function checkemail()
     {
-        var regex=/^[A-Z0-9._%+-]+@([A-Z0-9-]+\.)+[A-Z]{2,4}$/i ;
-        var mail=document.getElementById('receiver').value;
-        if(mail!="")
+        // var regex=/^[A-Z0-9._%+-]+@([A-Z0-9-]+\.)+[A-Z]{2,4}$/i ;
+        var otp=document.getElementById('otp').value;
+        var verify=document.getElementById('verify').value;
+        if(otp!="" && otp!=null && verify!='' && verify!=null)
         {
-            if(!regex.test(mail))
+            if(otp != verify)
             {
-                document.getElementById('receiver').style.border="2px solid red";
-                document.getElementById('receiver').value="";
+                document.getElementById('otp').style.border="2px solid red";
+                document.getElementById('otp').value="";
+                alert('Wrong OTP Entered!');
+                return false;
+            }
+            else
+            {
+                document.getElementById('otp').style.border="none";
+                alert('OTP Matched!');
+                return true;
             }
         }
         document.body.focus();
     }
-    function checkpassword()
-    {
-        var regex=/^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#\$%\^&\*]).{8,}$/i ;
-        var pass=document.getElementById('admin_pass').value;
-        if(pass!="")
-        {
-            if(!regex.test(pass))
-            {
-                document.getElementById('admin_pass').style.border="2px solid red";
-                document.getElementById('admin_pass').value="";
-            }
-        }
-        document.body.focus();
-    }
+    // function checkpassword()
+    // {
+    //     var regex=/^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#\$%\^&\*]).{8,}$/i ;
+    //     var pass=document.getElementById('admin_pass').value;
+    //     if(pass!="")
+    //     {
+    //         if(!regex.test(pass))
+    //         {
+    //             document.getElementById('admin_pass').style.border="2px solid red";
+    //             document.getElementById('admin_pass').value="";
+    //         }
+    //     }
+    //     document.body.focus();
+    // }
 </script>
 {% endblock %}

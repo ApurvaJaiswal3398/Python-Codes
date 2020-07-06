@@ -2,10 +2,11 @@ from flask import render_template, url_for, redirect, request, flash
 from project import app, crypt, db, Users, Carts, Products, Customer_Cart, Billing
 import secrets
 import random
+import string
 import os
 from PIL import Image
 from werkzeug.utils import secure_filename
-from datetime import date
+from datetime import date, datetime
 import plotly
 import plotly.express as px
 import plotly.graph_objs as go
@@ -18,12 +19,27 @@ from email.mime.multipart import MIMEMultipart
 
 logged_in = False
 logged_in_detail = None
+otp = None
+adminpass = None
+receiver = None
+loginmsg = None
+pschanged = False
+
+def noneall():
+    global otp
+    global adminpass
+    global receiver
+    global loginmsg
+    global pschanged
+    otp = adminpass = receiver = loginmsg = None
+    pschanged = False
+
 def check_data(email):
     query = {"email": email}
     x = Users.find_one(query)
     return x
 
-def create_plot():
+'''def create_plot():
     N = 40
     x = np.linspace(0,1,N)
     y = np.random.randn(N)
@@ -44,39 +60,124 @@ def index():
     ids = ['graph-{}'.format(i) for i,_ in enumerate(graphs)]
 
     graphJSON = json.dumps(graphs, cls=plotly.utils.PlotlyJSONEncoder)
-    return ids,graphJSON
+    return ids,graphJSON'''
 
 @app.route('/')
 def home():
     print(f"Logged In : {logged_in}")
     # return render_template('layout.html', title='HomePage', logged_in=logged_in)
-    return render_template('login.html', title='Login', logged_in=logged_in)
+    return redirect('/OTPVerification')
 
-def send_mail(mailid):
-    sender = 'jaiswal.apurva0.aj011@gmail.com'
-    password = 'Apurva3398@gmail'
-    receiver = mailid
-    subject = 'Password Recovery Code'
-    msg = '<p>One Time Verification Code to Change Password is :</p>\n<h4></h4>'
-
+def send_mail(cpass = 'Apurva3398@gmail'):
+    sender = 'jaiswal.apurva.aj011@gmail.com'
+    # password = 'Apurva3398@gmail'
+    subject = 'IntelliCart account password reset'
+    global otp
+    global adminpass
+    adminpass = cpass
+    otp = ''.join(random.choices(string.ascii_letters + string.digits, k=8))
+    msg = '''<h4 style='color: #292b2c;'>IntelliCart Account</h4>
+        <big><h1 style='color: #0275d8;'>Password reset code</h1></big>
+        <p>Please use this code to reset the password for the IntelliCart account ''' + receiver + '''.</p><br>
+        <p>Here is your code : <big><b>''' + otp + '''</b></big><br><br>Thanks.<br>The IntelliCart Team</p>'''
+    success = False
     m = MIMEMultipart('alternative')
     m['From'] = sender
     m['To'] = receiver
     m['Subject'] = subject
     m.attach(MIMEText(msg,'html'))
+    print(f'sender : {sender}\nReceiver : {receiver}\nOTP : {otp}\nMessage : {msg}\nSuccess : {success}\nMIME Content : {m}')
 
     con = smtplib.SMTP('smtp.gmail.com', 587)
+    print('Connected to SMTP Server')
     con.starttls()
-    con.login(sender, password)
-    msg_content = m.as_string()
-    con.sendail(sender, receiver, msg_content)
-    con.quit()
-    return True
+    print('TLS Encryption Enabled')
+    try:
+        con.login(sender, cpass)
+        print('Logged In by Comapny Email')
+        msg_content = m.as_string()
+        print('Message Created for the Mail to be Sent : \n',msg_content)
+        # con.sendmail(sender, receiver, 'Subject: So long.\nDear Alice, so long and thanks for all the fish. Sincerely, Bob')
+        con.sendmail(sender, receiver, msg_content)
+        print('Mail Sent')
+        success = True
+    except smtplib.SMTPAuthenticationError:
+        print('Wrong Company Password Entered!')
+        otp = None
+        success = False
+    finally:
+        con.quit()
+        print('Logged out of the Company Mail')
+        print('Sending Process Ended')
+        return success
 
+def send_confirmation():
+    sender = 'jaiswal.apurva.aj011@gmail.com'
+    # password = 'Apurva3398@gmail'
+    subject = 'IntelliCart Account Password Change'
+    # global otp
+    # otp = ''.join(random.choices(string.ascii_letters + string.digits, k=8))
+    msg = '''<h4 style='color: #444444;'>IntelliCart Account</h4>
+    <big><h1 style='color: blue;'>Your Password Changed</h1></big>
+    <p>Your password for the Microsoft account '''+receiver+''' was changed on '''+datetime.now().strftime('%Y/%m/%d %H:%M:%S')+'''.</p>
+    <p>Thanks,\nThe Intellicode Team.</p>'''
+    success = False
+    m = MIMEMultipart('alternative')
+    m['From'] = sender
+    m['Bcc'] = receiver
+    m['Subject'] = subject
+    m.attach(MIMEText(msg,'html'))
+    print(f'sender : {sender}\nReceiver : {receiver}\nAdmin Password : {adminpass}\nMessage : {msg}\nSuccess : {success}\nMIME Content : {m}')
+
+    con = smtplib.SMTP_SSL('smtp.gmail.com', 465)
+    print('Connected to SMTP Server via SSL')
+    # con.starttls()
+    # print('TLS Encryption Enabled')
+    if adminpass:
+        print('Admn Password : ',adminpass,' is OK')
+        try:
+            print('Logging In!')
+            con.login(sender, cpass)
+            print('Logged In by Comapny Email')
+            msg_content = m.as_string()
+            print('Message Created for the Mail to be Sent : \n',msg_content)
+            # con.sendmail(sender, receiver, 'Subject: So long.\nDear Alice, so long and thanks for all the fish. Sincerely, Bob')
+            con.sendmail(sender, receiver, msg_content)
+            print('Mail Sent')
+            success = True
+        except smtplib.SMTPAuthenticationError:
+            print('Wrong Company Password Entered!')
+            # otp = None
+            success = False
+        except smtplib.SMTPAuthenticationError:
+            print('The server didn\'t accept the username/password combination.')
+        except smtplib.SMTPNotSupportedError:
+            print('The AUTH command is not supported by the server.')
+        except smtplib.SMTPException:
+            print('No suitable authentication method was found.')
+        except smtplib.SMTPHeloError:
+            print('The server didn\'t reply properly to the helo greeting.')
+        except smtplib.SMTPRecipientsRefused:
+            print('The server rejected ALL recipients (no mail was sent).')
+        except smtplib.SMTPSenderRefused:
+            print('The server didn\'t accept the from_addr.')
+        except smtplib.SMTPDataError:
+            print('The server replied with an unexpected error code (other than a refusal of a recipient).')
+        except smtplib.SMTPNotSupportedError:
+            print('The mail_options parameter includes \'SMTPUTF8\' but the SMTPUTF8 extension is not supported by the server.')
+        finally:
+            con.quit()
+            print('Logged out of the Company Mail')
+            print('Sending Process Ended')
+            return success
+    else:
+        print('No Admin Password Given')
+        return False
 
 @app.route('/login', methods=['GET','POST'])
 def login():
-    message=None
+    message = None
+    alert = 'danger'
     global logged_in
     global logged_in_detail
     if request.method == "POST":
@@ -99,9 +200,77 @@ def login():
             print("Invalid Username")
             message = 'Invalid Email or Password!'
             logged_in = False
-        
+    if not message and loginmsg:
+        message = loginmsg
+        alert = 'success'
+        if pschanged:
+            noneall()
+    print(f"Logged In : {logged_in}\nOTP : {otp}\nAdmin Pass : {adminpass}\nReceiver : {receiver}\nLogin Msg : {loginmsg}\nPassword Changed : {pschanged}")
+    return render_template('login.html', title='Login', logged_in=logged_in, user=logged_in_detail, message=message, alert=alert)
+
+@app.route('/forgotpassword', methods=['GET','POST'])
+def forgotpassword():
+    message=None
+    global logged_in
+    global receiver
+    if request.method == "POST":
+        receiver = request.form.get('receiver')
+        admin_pass = request.form.get('admin_pass')
+        print("Mail Receiver : ",receiver," Company Password : ", admin_pass)
+        x = Users.find_one({'email': receiver})
+        print('Receiver Data : ',x)
+        if x:
+            if send_mail(admin_pass):
+                print(f'Mail Sent to Receiver {receiver} with OTP : {otp}')
+                return redirect('/OTPVerification')
+            else:
+                message = 'Sender\'s Password is Wrong!'
+        else:
+            message = 'No User for given Email Found!'
     print(f"Logged In : {logged_in}")
-    return render_template('login.html', title='Login', logged_in=logged_in, user=logged_in_detail, message=message)
+    return render_template('forgotpassword.html', title='Forgot Password', message=message)
+
+@app.route('/OTPVerification', methods=['GET','POST'])
+def otpverification():
+    if request.method == "POST":
+        verify = request.form.get('otp')
+        if verify == otp:
+            print('OTP Matched!')
+            return redirect('/ChangePassword')
+        else:
+            print('Wrong OTP Entered!')
+    return render_template('otpverification.html', title='OTP Verification', otp=otp)
+
+@app.route('/ChangePassword', methods=['GET','POST'])
+def changepassword():
+    global loginmsg
+    if request.method == "POST":
+        np = request.form.get('newpass')
+        cp = request.form.get('confpass')
+        print('New Password : ',np)
+        print('Confirm Password : ',cp)
+        if np == cp:
+            print('New Pasword Matched!')
+            x = Users.find_one({'email': receiver})
+            print('Receiver Data whose Password is to be changed : ',x)
+            if x:
+                hashed_password = crypt.generate_password_hash(np).decode('utf-8')
+                print(f'Hash Password for {np} generated is :\n{hashed_password}')
+                y = Users.update_one({"email": receiver},{"$set":{"password": hashed_password}})
+                if y.modified_count:
+                    print('Password Changed Successfully!\n',Users.find_one({'email': receiver}))
+                    # send_confirmation()
+                    global pschanged
+                    pschanged = True
+                    loginmsg = 'Password Changed Successfully. You can login to your account now.'
+                    return redirect('/login')
+                else:
+                    print('Error in Saving New Password!')
+            else:
+                print('No Such User Found with the Specified Email!')
+        else:
+            print('New Password did not match!')
+    return render_template('changepassword.html', title='Change Password')
 
 def save_data(username, fname, lname, mobile, email, password, access, image="/static/profile_pics/default.jpg"):
     value = {"username":username,"first_name":fname, "last_name":lname, "mobile":mobile, "email":email, "password":password, "image_file":image}
@@ -830,67 +999,6 @@ def billing_details():
             print("Please Enter a BIll Id")
     return render_template('billing.html', billcrsr=Billing, message=message, logged_in=logged_in, title='Billing Details')
 
-# @app.route('/invoice')
-# def invoice():
-#     count = 500
-#     xScale = np.linspace(0, 100, count)
-#     yScale = np.random.randn(count)
-#     trace = go.Scatter(x = xScale,y = yScale)
-#     data = [trace]
-#     graphJSON = json.dumps(data, cls=plotly.utils.PlotlyJSONEncoder)
-#     return render_template('index.html', graphJSON=graphJSON)
-    # rng = pd.date_range('1/1/2011', periods=7500, freq='H')
-    # ts = pd.Series(np.random.randn(len(rng)), index=rng)
-
-    # graphs = [
-    #     dict(
-    #         data=[
-    #             dict(
-    #                 x=[1, 2, 3],
-    #                 y=[10, 20, 30],
-    #                 type='scatter'
-    #             ),
-    #         ],
-    #         layout=dict(
-    #             title='first graph'
-    #         )
-    #     ),
-
-    #     dict(
-    #         data=[
-    #             dict(
-    #                 x=[1, 3, 5],
-    #                 y=[10, 50, 30],
-    #                 type='bar'
-    #             ),
-    #         ],
-    #         layout=dict(
-    #             title='second graph'
-    #         )
-    #     ),
-
-    #     dict( 
-    #         data=[
-    #             dict(
-    #                 x=ts.index,  # Can use the pandas data structures directly
-    #                 y=ts
-    #             )
-    #         ]
-    #     )
-    # ]
-
-    # # Add "ids" to each of the graphs to pass up to the client
-    # # for templating
-    # ids = ['graph-{}'.format(i) for i, _ in enumerate(graphs)]
-
-    # # Convert the figures to JSON
-    # # PlotlyJSONEncoder appropriately converts pandas, datetime, etc
-    # # objects to their JSON equivalents
-    # graphJSON = json.dumps(graphs, cls=plotly.utils.PlotlyJSONEncoder)
-
-    # return render_template('new.html', ids=ids, graphJSON=graphJSON)
-
-
 @app.route('/viewbill/<string:billid>')
 def viewbill(billid):
     print("Hello : "+billid,flush=True)
@@ -901,20 +1009,3 @@ def viewbill(billid):
     if not billdetails:
         print("Could Not Load DataSet!",flush=True)
     return render_template('viewbill.html', billid=billid, b=Billing, bd=billdetails, cc=Customer_Cart, prd=Products, title='View Billing Details')
-
-# @app.route('/showLineChart')
-# def line():
-#     count = 500
-#     xScale = np.linspace(0, 100, count)
-#     yScale = np.random.randn(count)
- 
-#     # Create a trace
-#     trace = go.Scatter(
-#         x = xScale,
-#         y = yScale
-#     )
- 
-#     data = [trace]
-#     graphJSON = json.dumps(data, cls=plotly.utils.PlotlyJSONEncoder)
-#     return render_template('index1.html',
-#                                graphJSON=graphJSON)
