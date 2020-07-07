@@ -67,7 +67,7 @@ def home():
     # return render_template('layout.html', title='HomePage', logged_in=logged_in)
     return redirect('/OTPVerification')
 
-def send_mail():
+def send_mail(cpass):
     sender = 'jaiswal.apurva.aj011@gmail.com'
     subject = 'IntelliCart account password reset'
     global otp
