@@ -10,7 +10,6 @@
 </style>
 {% endblock %}
 
-
 {% block spin_register %}<span class="spinner-grow spinner-grow-sm"></span>{% endblock %}
 
 {% block body %}
@@ -41,7 +40,7 @@
                         <div class="h3 mb-3 font-weight-normal text-center">Register</div><hr>
                         <div class="btn-group" data-toggle="buttons" style="float: right;">
                             <label class="btn btn-success">
-                                <input type="radio" name="isadmin" id="isadmin" autocomplete="off" onchange="chooseaccess()" value="Admin" required>Admin
+                                <input type="radio" name="isadmin" id="isadmin" autocomplete="off" onchange="chooseaccess()" value="Admin" {% if ma==False %} disabled {% else %} required {% endif %}>Admin
                             </label>
                             <label class="btn btn-success active">
                                 <input type="radio" name="isadmin" id="isuser" autocomplete="off" onchange="chooseaccess()" value="User" required>User

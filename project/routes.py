@@ -24,6 +24,7 @@ adminpass = None
 receiver = None
 loginmsg = None
 pschanged = False
+admincount = 0
 
 def noneall():
     global otp
@@ -51,14 +52,12 @@ def check_data(email):
 def index():
     rng = pd.date_range('1/1/2011', periods=7500, freq='H')
     ts = pd.Series(np.random.randn(len(rng)), index=rng)
-
     graphs=[
         dict( data=[ dict(x=[1,2,3], y=[10,20,30], type='scatter') ], layout=dict(title='First Graph')),
         dict( data=[ dict(x=[1,3,6], y=[10,50,20], type='bar') ], layout=dict(title='Second Graph')),
         dict( data=[ dict(x=ts.index, y=ts)])
     ]
     ids = ['graph-{}'.format(i) for i,_ in enumerate(graphs)]
-
     graphJSON = json.dumps(graphs, cls=plotly.utils.PlotlyJSONEncoder)
     return ids,graphJSON'''
 
@@ -113,8 +112,6 @@ def send_mail():
 def send_confirmation():
     sender = 'jaiswal.apurva.aj011@gmail.com'
     subject = 'IntelliCart Account Password Change'
-    # global otp
-    # otp = ''.join(random.choices(string.ascii_letters + string.digits, k=8))
     msg = '''<h4 style='color: #444444;'>IntelliCart Account</h4>
     <big><h1 style='color: blue;'>Your Password Changed</h1></big>
     <p>Your password for the Microsoft account '''+receiver+''' was changed on '''+datetime.now().strftime('%Y/%m/%d %H:%M:%S')+'''.</p>
@@ -287,10 +284,24 @@ def is_present(key,value):
     else:
         return False
 
+def coutnadmins():
+    global admincount
+    admincount = 0
+    x = Users.find({"admin": "True"})
+    for i in x:
+        print(i['first_name']+" "+i['last_name'])
+        admincount += 1
+    print("No of Admins : ",admincount)
+
 @app.route('/register', methods=['GET','POST'])
 def register():
     message=None
     global logged_in
+    coutnadmins()
+    if admincount == 2:
+        moreadmin = False
+    else:
+        moreadmin = True
     alert = "danger"
     if request.method == 'POST':
         reg_access = request.form.get('access')
@@ -318,19 +329,19 @@ def register():
             message = 'You Have Been Registered. You May Login!'
             alert = "success"
     print(f"Logged In : {logged_in}")
-    return render_template('register.html', title='Register', logged_in=logged_in, message=message, alert=alert)
+    return render_template('register.html', title='Register', logged_in=logged_in, message=message, alert=alert, ma=moreadmin)
 
 @app.route('/dashboard')
 def dashboard():
-    graph = create_plot()
-    ids,graphJSON = index()
+    # graph = create_plot()
+    # ids,graphJSON = index()
     User_cursor = Users.find().sort("username").limit(8)
     Cart_cursor = Carts.find().sort("_id").limit(8)
     Product_cursor = Products.find().sort("_id").limit(8)
     Customer_cart_cursor = Customer_Cart.find().sort("used_date").limit(8)
     Billing_cursor = Billing.find().sort("_id").limit(8)
     print(f"Logged In : {logged_in}")
-    return render_template('dashboard.html', title='Dashboard', logged_in=logged_in, user=logged_in_detail, usrcrsr=User_cursor, crtcrsr=Cart_cursor, prdcrsr=Product_cursor, cccrsr=Customer_cart_cursor, bilcrsr=Billing_cursor, graphJSON=graphJSON, ids=ids)
+    return render_template('dashboard.html', title='Dashboard', logged_in=logged_in, user=logged_in_detail, usrcrsr=User_cursor, crtcrsr=Cart_cursor, prdcrsr=Product_cursor, cccrsr=Customer_cart_cursor, bilcrsr=Billing_cursor)#, graphJSON=graphJSON, ids=ids)
 
 @app.route('/logout')
 def logout():
